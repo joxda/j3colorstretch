@@ -22,6 +22,7 @@ etc
 
 - check license
 - illustrate?
+- release? compiled versions?
 - show histograms?
 - mono versions?
 - add log scale?
