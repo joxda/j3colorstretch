@@ -1,6 +1,6 @@
 project(j3colorstretch)
 
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 2.8.10)
 
 set (OpenCV_DIR "/usr/local/Cellar/opencv/4.3.0/lib/cmake/opencv4/")
 FIND_PACKAGE( OpenCV REQUIRED )
