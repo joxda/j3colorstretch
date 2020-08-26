@@ -16,6 +16,7 @@ install?
 
 # ToDos
 
+- include example exectuable...
 - check license
 - compile library and example executable
 - illustrate?
