@@ -13,3 +13,12 @@ cmake make
 install?
 
 # Use
+
+# ToDos
+
+- check license
+- compile library and example executable
+- illustrate?
+- mono versions?
+- add log scale?
+- CI action?
