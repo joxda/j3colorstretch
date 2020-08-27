@@ -508,7 +508,7 @@ if ( ofe == 0 ) {  # file does not exist
 
     CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
     cv::Mat colref;
-    if (~clp.has("ncc") && output_norm.channels()==3)
+    if (!clp.has("ncc") && output_norm.channels()==3)
     {   
         colref = output_norm.clone();
     }
@@ -542,7 +542,7 @@ if ( ofe == 0 ) {  # file does not exist
  
     float colorcorrectionfactor = clp.get<float>("ccf");
 
-    if (~clp.has("ncc") && output_norm.channels()==3)
+    if (!clp.has("ncc") && output_norm.channels()==3)
     {
         colorcorr(output_norm, output_norm, colref, colorcorrectionfactor);
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
