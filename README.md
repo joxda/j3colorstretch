@@ -6,20 +6,24 @@ The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be obt
 # Requirements
 
 OpenCV (version?)
+cmake
 other?
 
 # Compilation and installation
-cmake make
-install?
+cmake .
+make
+note about cmake opencv
 
 # Use
+EXAMPLES
+etc
 
 # ToDos
 
-- include example exectuable...
 - check license
-- compile library and example executable
 - illustrate?
+- release? compiled versions?
+- show histograms?
 - mono versions?
 - add log scale?
 - CI action?
