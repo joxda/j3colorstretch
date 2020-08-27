@@ -180,6 +180,9 @@ int main(int argc, char** argv)
                       "{o output obase | output | output image}"
                       "{tc tonecurve   |        | application of a tone curve}"
                       "{sl skylevelfactor | 0.06 | sky level relative to the histogram peak  }"
+                      "{zeroskyred    | 4096.0    | desired zero point on sky, red   channel}"      
+                    "{zeroskygreen  | 4096.0    | desired zero point on sky, green channel}"
+                    "{zeroskyblue   | 4096.0 | desired zero point on sky, green channel }"
                       "{ri rootiter    | 1      | number of iterations on applying rootpower - sky }"
                       "{rp rootpower   | 6.0    | power factor: 1/rootpower}"
                       "{rp2 rootpower2 |        | use this power on iteration 2}"
@@ -473,28 +476,22 @@ if ( ofe == 0 ) {  # file does not exist
 
 
     CustomCLP2 clp(argc, argv, keys);
-
-   if (clp.get<bool>("help"))
-   {
-       std::cout << "Help" << std::endl;
+    
+    long int N = clp.n_positional_args();
+    if (clp.get<bool>("help") || N==0)
+    {
        clp.printMessage();
        return 0;
-   }
+    }
 
     // TBD add later to the outfile names...
     cv::String outf = clp.get<cv::String>("o");
 
     float skylevelfactor = clp.get<float>("sl");
     std::cout << "Skylevelfactor: " << skylevelfactor << std::endl;
-
-    long int N = clp.n_positional_args();
-
-
-    if (N == 0)
-        {
-            std::cout << "NO ARGUMENTS" << std::endl;
-            return -1;
-        }
+    float skyLR = clp.get<float>("zeroskyred");
+    float skyLG = clp.get<float>("zeroskygreen");
+    float skyLB = clp.get<float>("zeroskyblue");
 
     //clp.errorCheck();
 
@@ -509,7 +506,7 @@ if ( ofe == 0 ) {  # file does not exist
         toneCurve(output_norm,output_norm);
     }
 
-    CVskysub(output_norm, output_norm, skylevelfactor);
+    CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
     cv::Mat colref;
     if (~clp.has("ncc") && output_norm.channels()==3)
     {   
@@ -527,7 +524,7 @@ if ( ofe == 0 ) {  # file does not exist
     for(int i=0; i < clp.get<int>("ri"); i++) {
         rtpwr = i != 1 ? rootpower : rootpower2;
         stretching(output_norm, output_norm, rootpower);
-        CVskysub(output_norm, output_norm, skylevelfactor);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
     }
     
     float spwr, soff;
@@ -540,7 +537,7 @@ if ( ofe == 0 ) {  # file does not exist
         spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
         soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
         scurve(output_norm, output_norm, spwr, soff);
-        CVskysub(output_norm, output_norm, skylevelfactor);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
     }
  
     float colorcorrectionfactor = clp.get<float>("ccf");
@@ -548,7 +545,7 @@ if ( ofe == 0 ) {  # file does not exist
     if (~clp.has("ncc") && output_norm.channels()==3)
     {
         colorcorr(output_norm, output_norm, colref, colorcorrectionfactor);
-        CVskysub(output_norm, output_norm, skylevelfactor);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
     }
 
 /*if ( setmin > 0) {   # this makes sure there are no really dark pixels.
