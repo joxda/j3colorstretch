@@ -60,7 +60,7 @@ struct CustomCLP2
 
             pos_args.push_back(s);
         }
-        _clp.about("\nThis program demonstrates the use of calcHist() -- histogram creation.\n"); // TBD
+        _clp.about("\nThis program stretches astronomical images while preserving the colors.\n"); 
 
     }
     
