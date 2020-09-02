@@ -1,6 +1,11 @@
 /*******************************************************************************
   Copyright(c) 2020 Joachim Janz. All rights reserved.
-
+ 
+  The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be 
+  obtained from 
+  https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/  
+  and which is licenced under the GPL.
+  
   This program is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the Free
   Software Foundation; either version 2 of the License, or (at your option)
