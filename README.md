@@ -73,10 +73,3 @@ j3colorstretch [parameters] IMAGEFILENAME
 ```
 
 The software should work with any file format that is understood by OpenCV, but in the most common usage case it will be a 16bit per channel RGB tiff file.
-
-# ToDos
-- illustrate?
-- release? compiled versions?
-- show histograms?
-- add log scale?
-- CI action?
