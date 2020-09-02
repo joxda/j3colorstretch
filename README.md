@@ -68,7 +68,7 @@ Running the executable without any parameters prints out the following help mess
 
 To stretch an image the image name needs to be given as argument with any of the optional parameters listet above.
 
-```
+```shell
 j3colorstretch [parameters] IMAGEFILENAME
 ```
 
