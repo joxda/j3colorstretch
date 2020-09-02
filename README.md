@@ -59,10 +59,11 @@ Running the executable without any parameters prints out the following help mess
 	--tc, --tonecurve
 		application of a tone curve
 	--zeroskyblue (value:4096.0)
-		desired zero point on sky, green channel
+		desired zero point on sky, blue channel
 	--zeroskygreen (value:4096.0)
 		desired zero point on sky, green channel
 	--zeroskyred (value:4096.0)
+		desired zero point on sky, red channel
 ```
 
 To stretch an image the image name needs to be given as argument with any of the optional parameters listet above.
