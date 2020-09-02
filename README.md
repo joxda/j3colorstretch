@@ -3,6 +3,8 @@ Stretches astronomical images while preserving the colors.
 
 The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be obtained from https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/ , and which is licenced under the GPL.
 
+There are minor changes and updates to the algorithms, but the major difference is that this program here does not rely on davinci. It is coded with c++ using OpenCV and is significantly faster.
+
 # Requirements
 
 - OpenCV (probably version 3 or later)
