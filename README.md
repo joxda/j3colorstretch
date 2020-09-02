@@ -14,7 +14,7 @@ There are minor changes and updates to the algorithms, but the major difference 
 
 Once the requirements are fulfilled, the code should compile simply by the following sequence
 
-```
+```shell
 cmake .
 make
 ```
