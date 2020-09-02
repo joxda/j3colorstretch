@@ -12,14 +12,19 @@ The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be obt
 
 Once the requirements are fulfilled, the code should compile simply by the following sequence
 
-  cmake .
-  make
+```
+cmake .
+make
+```
+
+
 
 This create the executable `j3colorstretch`. It can be installed to `/usr/local/bin/` by running `make install`.
 
 # Usage
 
 Running the executable without any parameters prints out the following help message:
+
 
   Usage: j3colorstretch [params]
 
@@ -58,12 +63,15 @@ Running the executable without any parameters prints out the following help mess
 	--zeroskygreen (value:4096.0)
 		desired zero point on sky, green channel
 	--zeroskyred (value:4096.0)
-
+```
 
 To stretch an image the image name needs to be given as argument with any of the optional parameters listet above.
 
-  ./j3colorstretch [parameters] IMAGEFILENAME
+```
+./j3colorstretch [parameters] IMAGEFILENAME
 
+./j3colorstretch [parameters] IMAGEFILENAME
+```
 
 # ToDos
 - do the installation thing
