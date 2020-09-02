@@ -17,3 +17,5 @@ TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAK
 set(MY_OpenCV_LIBS "opencv_core;opencv_highgui;")
 
 target_link_libraries( j3colorstretch  ${MY_OpenCV_LIBS})
+
+install(TARGETS j3colorstretch DESTINATION bin)
