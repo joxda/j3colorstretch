@@ -8,7 +8,7 @@ There are minor changes and updates to the algorithms, but the major difference 
 # Requirements
 
 - OpenCV (probably version 3 or later)
-- cmake (probably 3 or later)
+- cmake (probably 2.8.12 or later)
 
 # Compilation
 
@@ -19,7 +19,7 @@ cmake .
 make
 ```
 
-This create the executable `j3colorstretch`. It can be installed to `/usr/local/bin/` by running `make install`.
+This create the executable `j3colorstretch`. It can be installed by running `sudo make install`.
 
 # Usage
 
@@ -69,16 +69,14 @@ Running the executable without any parameters prints out the following help mess
 To stretch an image the image name needs to be given as argument with any of the optional parameters listet above.
 
 ```
-./j3colorstretch [parameters] IMAGEFILENAME
+j3colorstretch [parameters] IMAGEFILENAME
 ```
 
 The software should work with any file format that is understood by OpenCV, but in the most common usage case it will be a 16bit per channel RGB tiff file.
 
 # ToDos
-- do the installation thing
 - illustrate?
 - release? compiled versions?
 - show histograms?
-- mono versions?
 - add log scale?
 - CI action?
