@@ -3,7 +3,7 @@
 Under construction...
 
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AVHSY5ZEGB482)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-900000.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AVHSY5ZEGB482)
 
 
 ## Usage
