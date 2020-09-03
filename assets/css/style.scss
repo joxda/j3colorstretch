@@ -1,6 +1,10 @@
 ---
 ---
 
-$conifer: #b30000;
-@import "{{ site.theme }}";$conifer: #b30000;
-$conifer: #b30000;
+@import "{{ site.theme }}";
+header {
+  border-bottom: 1px dashed #600000;
+}
+header h1 {
+  color: #600000;
+}
