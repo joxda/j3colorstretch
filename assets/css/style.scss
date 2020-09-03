@@ -3,7 +3,7 @@
 
 @import "{{ site.theme }}";
 header {
-  border-bottom: 1px dashed #990000;
+  border-bottom: 1px double #990000;
 }
 header h1 {
   color: #990000;
@@ -14,4 +14,7 @@ header h1 {
 }
 h1, h2, h3, h4, h5, h6 {
   color: #990000;
+}
+body {
+ color: #FFCCCC; 
 }
