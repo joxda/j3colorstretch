@@ -22,13 +22,11 @@
 *******************************************************************************/
 
 #include "opencv2/core.hpp"
-#include "opencv2/features2d.hpp"
 #include "opencv2/highgui.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/imgproc.hpp"
 
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #include "j3colorstretch.hpp"
 
@@ -123,7 +121,7 @@ int writeTif(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_16UC1, 1, 65535.); // TBD reasonable values, log scaling?
+            out, CV_16UC1, 1, 65535.); // TBD factor?
     }
 
     cv::imwrite(ofile, out);
@@ -140,25 +138,25 @@ int writeJpg(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_16UC1, 1, 255.); // TBD reasonable values, log scaling?
+            out, CV_16UC1, 1, 255.); // TBD  factor?
     }
 
     cv::imwrite(ofile, out);
     return 0;
 }
 
- //if (cv::haveImageReader(file)) // TBD!! not in v3
 int readImage(const char* file, cv::Mat& image) {
     image = cv::imread(file, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
-    if (image.empty())
-        return -1;
+    if (image.empty()) {
+		std::cout << "Error reading image." << std::endl;
+		return -1;
+	}    
 
     if (image.channels() == 1)
         {
             image.convertTo(image, CV_32FC1);
             cv::normalize(image, image, 0.0, 1.0, cv::NORM_MINMAX);
-            // 1 / 65535.0); // TBD FACTOR... AND #channels TBD: FACTOR ALSO
-            // APPLIES TO WEIGHT IMAGE...
+            // TBD FACTOR
         }
         else
         {
@@ -169,14 +167,16 @@ int readImage(const char* file, cv::Mat& image) {
     return 0;
 }
 
-// TBD image scaling?
-// CHECK output file exists...
-// plot histograms etc?
+bool fexists(const std::string& filename) {
+    std::ifstream ifile(filename.c_str());
+    return (bool)ifile;
+}
 
 int main(int argc, char** argv)
 {
     cv::String keys = "{help h usage   |        | print this message   }"
-                      "{o output obase | output | output image}"
+                      "{o output  |        | output image (without the result will be displayed, supports jpg and tif)}"
+					  "{f               |       | force to overwrite output file}"
                       "{tc tonecurve   |        | application of a tone curve}"
                       "{sl skylevelfactor | 0.06 | sky level relative to the histogram peak  }"
                       "{zeroskyred    | 4096.0    | desired zero point on sky, red channel}"      
@@ -204,11 +204,26 @@ int main(int argc, char** argv)
        return 0;
     }
 
-    // TBD add later to the outfile names...
-    cv::String outf = clp.get<cv::String>("o");
+	std::string ext = "";
+
+	if (clp.has("o")) {
+    	cv::String outf = clp.get<cv::String>("o");
+
+		ext = outf.substr(outf.find_last_of(".")+1);
+		if (ext != "jpg" && ext != "jpeg" && ext != "tif" && ext != "tiff")
+		{
+			std::cout << "Unknown file extension" << std::endl;
+			return -1;
+		}
+		const std::string tmp = std::string(outf.c_str());
+		if ( fexists(tmp) && !clp.get<bool>("f"))
+		{
+			std::cout << "File exists" << std::endl;
+			return -1;
+		}
+	}
 
     float skylevelfactor = clp.get<float>("sl");
-    std::cout << "Skylevelfactor: " << skylevelfactor << std::endl;
     float skyLR = clp.get<float>("zeroskyred");
     float skyLG = clp.get<float>("zeroskygreen");
     float skyLB = clp.get<float>("zeroskyblue");
@@ -216,7 +231,8 @@ int main(int argc, char** argv)
     //clp.errorCheck();
 
     cv::Mat thisIma; 
-    readImage(clp.pos_args[0].c_str(),thisIma);
+    if(readImage(clp.pos_args[0].c_str(),thisIma)<0)
+		return -1;
     
     cv::Mat output_norm;
     cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD
@@ -232,8 +248,6 @@ int main(int argc, char** argv)
     {   
         colref = output_norm.clone();
     }
-
-// TBD write some outputs...
 
     float rootpower = clp.get<float>("rp");
     float rootpower2 = rootpower;
@@ -295,13 +309,18 @@ int main(int argc, char** argv)
 	cb = 0 # clear memory
 }*/
 
-
-    writeTif("out.tif", output_norm);
+	if (ext == "jpg" || ext == "jpeg") 
+	{
+		writeJpg("out.jpg", output_norm); 
+	} else if (ext == "tif" || ext == "tiff") {
+		writeTif("output.tif", output_norm);
+	} else {
+		cv::Mat c3;
+    	output_norm.convertTo(c3, CV_8UC3, 255.);
     
-    cv::Mat c3;
-    output_norm.convertTo(c3, CV_8UC3, 255.);
-    writeJpg("out.jpg", output_norm); // TBD write jpg
-    cv::imshow("Output", c3);
-    cv::waitKey(0);
+    	cv::imshow("Output", c3);
+    	cv::waitKey(0);
+	}
+    return 0;
 }
 

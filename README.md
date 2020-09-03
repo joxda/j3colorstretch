@@ -21,7 +21,8 @@ cmake .
 make
 ```
 
-This create the executable `j3colorstretch`. It can be installed by running `sudo make install`.
+If cmake fails to find OpenCV even though it is installed, it should help to modify the `OpenCV_DIR` path in the file `CMakeList.txt` to the path where the file `OpenCVConfig.cmake` can be found.
+The `make` command creates the executable `j3colorstretch`, if successful. It can be installed by running `sudo make install`.
 
 # Usage
 

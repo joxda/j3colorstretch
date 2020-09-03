@@ -2,7 +2,7 @@ build/*
 static/*
 CMakeFiles/*
 cmake_install.cmake
-
+install_manifest.txt
 Makefile
 
 *.sublime-workspace
