@@ -1,37 +1,39 @@
-## Welcome to GitHub Pages
+# j3colorstretch
 
-You can use the [editor on GitHub](https://github.com/joxda/j3colorstretch/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Under construction...
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[//]: # You can use the [editor on GitHub](https://github.com/joxda/j3colorstretch/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
-### Markdown
+[//]: # Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+[//]: # ### Markdown
 
-```markdown
-Syntax highlighted code block
+[//]: # Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-# Header 1
-## Header 2
-### Header 3
+[//]: # ```markdown
+[//]: # Syntax highlighted code block
 
-- Bulleted
-- List
+[//]: # # Header 1
+[//]: # ## Header 2
+[//]: # ### Header 3
 
-1. Numbered
-2. List
+[//]: # - Bulleted
+[//]: # - List
 
-**Bold** and _Italic_ and `Code` text
+[//]: # 1. Numbered
+[//]: # 2. List
 
-[Link](url) and ![Image](src)
-```
+[//]: # **Bold** and _Italic_ and `Code` text
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+[//]: # [Link](url) and ![Image](src)
+[//]: # ```
 
-### Jekyll Themes
+[//]: # For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/joxda/j3colorstretch/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+[//]: # ### Jekyll Themes
 
-### Support or Contact
+[//]: # Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings][//]: # (https://github.com/joxda/j3colorstretch/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+[//]: # ### Support or Contact
+
+[//]: # Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
