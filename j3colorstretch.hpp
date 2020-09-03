@@ -148,7 +148,7 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
 
         if (pow(chistgreenskydn - skyLG, 2) <= 100 &&
             pow(chistredskydn - skyLR, 2) <= 100 &&
-            pow(chistblueskydn - skyLB, 2) <= 100)
+            pow(chistblueskydn - skyLB, 2) <= 100 && i > 1)
             break;
 
         float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
