@@ -3,18 +3,21 @@
 
 @import "{{ site.theme }}";
 header {
-  border-bottom: 1px double #990000;
+  border-bottom: 1px dotted #990000;
 }
 header h1 {
   color: #990000;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1),
-               0 0 5px rgba(232, 181, 83, 0.1),
-               0 0 10px rgba(232, 181, 83, 0.1);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2),
+               0 0 5px rgba(232, 83, 83, 0.3),
+               0 0 10px rgba(232, 83, 83, 0.3);
 
 }
 h1, h2, h3, h4, h5, h6 {
   color: #990000;
 }
 body {
- color: #FFCCCC; 
+ color: #777; 
+}
+.btn {
+    color: #999;
 }
