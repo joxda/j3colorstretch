@@ -9,8 +9,8 @@ There are minor changes and updates to the algorithms, but the major difference 
 
 # Requirements
 
-- OpenCV (probably version 3 or later)
-- cmake (probably 2.8.12 or later)
+- OpenCV (version 3.0.0 or later)
+- cmake (2.8.12 or later)
 
 # Compilation
 
