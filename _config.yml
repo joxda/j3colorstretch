@@ -1,4 +1,6 @@
 theme: jekyll-theme-hacker#
 
+title: "j3colorstretch"
+description: Stretches astronomical images while preserving the colors.
 plugins:
   - jekyll-seo-tag
