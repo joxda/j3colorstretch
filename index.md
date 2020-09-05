@@ -62,7 +62,7 @@ The software should work with any file format that is understood by OpenCV, but 
 ## Examples
 
 The photos in the following examples were taken by Jerry Lodriguss and downloaded from [https://www.astropix.com/html/i_astrop/practice_files.html](https://www.astropix.com/html/i_astr\
-op/practice_files.html). For the purpose of this illustration the raw images were stacked (without any bias/dark subtraction and without flatfielding) and the coadded images processed with `j3colorstretch`. The raw verions were saved as JPGs with `j3colorstretch input.tif--rootiter=0 --output=out.jpg`. 
+op/practice_files.html). For the purpose of this illustration the raw images were stacked (without any bias/dark subtraction and without flatfielding) and the coadded images processed with `j3colorstretch`. The raw verions were saved as JPGs with `j3colorstretch input.tif--rootiter=0 --output=out.jpg`. From there the only step is to run `j3colorstretch`.
 
 ### M 42
 Raw image
@@ -82,7 +82,10 @@ Two iterations of root stretches with different powers with `j3colorstretch M45.
 Raw image
 ![M42_raw](/images/M31_raw.jpg)
 Two iterations of root stretches, two iterations of s-curves and color enhanced with `j3colorstretch -rp=15 -ri=2 --rp2=3 -si=2 -ccf=1.5 -o=M31_rp15_3_s2_c1.5.jpg`
-![M42_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)                                                                                              
+![M42_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)
+
+## Compilation and Installation
+See the [github pages](https://github.com/joxda/j3colorstretch).
 
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H5250BJ)
