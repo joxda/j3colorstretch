@@ -75,7 +75,7 @@ A simple strong root stretch with
 ### M 45
 Raw image
 ![M42_raw](/images/M45_raw.jpg)
-Two iterations of root stretches with different powers with `j3colorstretch M45.tig --rootpower=100 --rootiter=2 --rootpower2=5 --output=M45_rp100_5.jpg`
+Two iterations of root stretches with different powers with `j3colorstretch M45.tif --rootpower=100 --rootiter=2 --rootpower2=5 --output=M45_rp100_5.jpg`
 ![M42_j3colorstretch](/images/M45_rp100_5.jpg)                                                             
 
 ### M 31
