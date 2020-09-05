@@ -215,10 +215,10 @@ int main(int argc, char** argv)
 			std::cout << "Unknown file extension" << std::endl;
 			return -1;
 		}
-		const std::string tmp = std::string(outf.c_str());
-		if ( fexists(tmp) && !clp.get<bool>("f"))
+		const std::string ofile = std::string(outf.c_str());
+		if ( fexists(ofile) && !clp.get<bool>("f"))
 		{
-			std::cout << "File exists" << std::endl;
+			std::cout << "File " << ofile << " exists" << std::endl;
 			return -1;
 		}
 	}
