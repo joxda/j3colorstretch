@@ -205,9 +205,9 @@ int main(int argc, char** argv)
     }
 
 	std::string ext = "";
-
+    cv::String outf ;
 	if (clp.has("o")) {
-    	cv::String outf = clp.get<cv::String>("o");
+    	outf = clp.get<cv::String>("o");
 
 		ext = outf.substr(outf.find_last_of(".")+1);
 		if (ext != "jpg" && ext != "jpeg" && ext != "tif" && ext != "tiff")
@@ -311,9 +311,9 @@ int main(int argc, char** argv)
 
 	if (ext == "jpg" || ext == "jpeg") 
 	{
-		writeJpg("out.jpg", output_norm); 
+		writeJpg(outf.c_str(), output_norm); 
 	} else if (ext == "tif" || ext == "tiff") {
-		writeTif("output.tif", output_norm);
+		writeTif(outf.c_str(), output_norm);
 	} else {
 		cv::Mat c3;
     	output_norm.convertTo(c3, CV_8UC3, 255.);
