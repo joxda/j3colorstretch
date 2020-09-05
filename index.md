@@ -59,7 +59,30 @@ j3colorstretch [parameters] IMAGEFILENAME
 
 The software should work with any file format that is understood by OpenCV, but in the most common usage case it will be a 16bit per channel RGB tiff file.
 
+## Examples
 
+The photos in the following examples were taken by Jerry Lodriguss and downloaded from [https://www.astropix.com/html/i_astrop/practice_files.html](https://www.astropix.com/html/i_astr\
+op/practice_files.html). For the purpose of this illustration the raw images were stacked (without any bias/dark subtraction and without flatfielding) and the coadded images processed with `j3colorstretch`. The raw verions were saved as JPGs with `j3colorstretch input.tif--rootiter=0 --output=out.jpg`. 
+
+### M 42
+Raw image
+![M42_raw](/images/M42_raw.jpg)
+A simple strong root stretch with
+`j3colorstretch M42.tif --rootpower=300 --output=M42_rp300.jpg
+![M42_j3colorstretch](/images/M42_rp300.jpg)                                                                                             
+
+
+### M 45
+Raw image
+![M42_raw](/images/M45_raw.jpg)
+Two iterations of root stretches with different powers with `j3colorstretch M45.tig --rootpower=100 --rootiter=2 --rootpower2=5 --output=M45_rp100_5.jpg`
+![M42_j3colorstretch](/images/M45_rp100_5.jpg)                                                             
+
+### M 31
+Raw image
+![M42_raw](/images/M31_raw.jpg)
+Two iterations of root stretches, two iterations of s-curves and color enhanced with `j3colorstretch -rp=15 -ri=2 --rp2=3 -si=2 -ccf=1.5 -o=M31_rp15_3_s2_c1.5.jpg`
+![M42_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)                                                                                              
 
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H5250BJ)
