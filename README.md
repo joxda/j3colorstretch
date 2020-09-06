@@ -1,7 +1,8 @@
 # j3colorstretch
 Stretches astronomical images while preserving the colors.
 
-![M31](https://github.com/joxda/j3colorstretch/blob/gh-pages/M31_rp15_3_s2_c1.5.jpg)
+![M31](https://github.com/joxda/j3colorstretch/blob/gh-pages/M31_rp15_3_s2_c1.5.jpg?raw=true)
+(Raw images from Jerry Lodriguss, https://www.astropix.com/html/i_astrop/practice_files.html )
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AVHSY5ZEGB482)
 
