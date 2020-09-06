@@ -1,6 +1,8 @@
 # j3colorstretch
 Stretches astronomical images while preserving the colors.
 
+![M31](https://github.com/joxda/j3colorstretch/blob/gh-pages/M31_rp15_3_s2_c1.5.jpg)
+
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AVHSY5ZEGB482)
 
 The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be obtained from https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/ , and which is licenced under the GPL.
