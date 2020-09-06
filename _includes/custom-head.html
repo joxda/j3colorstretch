@@ -2,4 +2,6 @@
 {% seo %}
 
 <!-- Google Analytics tracking ID -->
-{% include analytics.html %}
+{% if jekyll.environment == 'production' %}
+     {% include analytics.html %}
+{% endif %}
