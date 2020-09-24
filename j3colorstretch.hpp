@@ -53,7 +53,7 @@ inline int skyDN(const cv::Mat& hist, const float skylevel)
     cv::Point maxloc;
     int chistskydn = 0;
     cv::minMaxLoc(hist, 0, 0, 0, &maxloc);         // TBD WHAT IF NOT FOUND?
-    const float* p = hist.ptr<float>(0, maxloc.y); // CHECK ORDER
+    const float* p = hist.ptr<float>(0, maxloc.y); 
     for (int ih = maxloc.y; ih >= 2; ih--)
     {
         float top = *p;
@@ -77,7 +77,7 @@ inline int skyDN(
     cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc); // TBD WHAT IF NOT FOUND?
     skylevel = (float)histGmax * skylevelfactor;
 
-    const float* p = hist.ptr<float>(0, maxloc.y); // CHECK ORDER
+    const float* p = hist.ptr<float>(0, maxloc.y); 
     for (int ih = maxloc.y; ih >= 2; ih--)
     {
         float top = *p;
@@ -108,13 +108,46 @@ void toneCurve(const cv::Mat& inImage, cv::Mat& outImage)
     cv::multiply(tmpImage, b, outImage);
 }
 
+void CVskysub1Ch(const cv::Mat& inImage, cv::Mat& outImage,
+    const float skylevelfactor, const float sky = 4096.0) 
+{ 
+    float zerosky = sky / 65535.0;
+    
+    for (int i = 1; i <= 25; i++)
+    {
+        cv::Mat histh;
+        hist(inImage, histh, true);
+        
+        cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
+        cv::Mat hist_cropped = histh(roi);
+        
+        float skylevel;
+        int chistskydn;
+        chistskydn = skyDN(hist_cropped, skylevelfactor, skylevel) + 400;
+        
+        if (pow(chistskydn - sky, 2) <= 100)
+            break;
+
+        float chistskysub1 = chistskydn / 65535. - zerosky;
+        
+        float cfscale = 1.0 / (1.0 - chistskysub1);
+
+        cv::subtract(inImage, chistskysub1, outImage);
+        cv::multiply(outImage, cfscale, outImage);
+    }
+    cv::max(outImage, 0.0, outImage);
+}
 
 void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
     const float skylevelfactor, const float skyLR = 4096.0,
     const float skyLG = 4096.0,
     const float skyLB = 4096.0) // TBD desired zero point in channels... ---
-                                // WHAT ABOUT SINGLE CHANNEL IMAGES?
 { 
+    if(inImage.channels()==1) {
+        CVskysub1Ch(inImage,  outImage, skylevelfactor, skyLR);
+        return; 
+    }
+
     std::vector<cv::Mat> bgr_planes(3);
 
     cv::split(inImage, bgr_planes);
@@ -134,7 +167,7 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
         hist(g, g_hist, true);
         hist(b, b_hist, true);
 
-        cv::Rect roi = cv::Rect(0, 400, 1, 65100); // TBD CHECK ORDER
+        cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
         cv::Mat r_hist_cropped = r_hist(roi);
         cv::Mat g_hist_cropped = g_hist(roi);
         cv::Mat b_hist_cropped = b_hist(roi);
