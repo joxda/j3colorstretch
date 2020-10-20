@@ -14,8 +14,8 @@ set_property(TARGET j3colorstretch PROPERTY CXX_STANDARD 11)
 
 TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} )
 
-set(MY_OpenCV_LIBS "opencv_core;opencv_highgui;")
+#set(MY_OpenCV_LIBS "opencv_core;opencv_highgui;")
 
-target_link_libraries( j3colorstretch  ${MY_OpenCV_LIBS})
+target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
 
 install(TARGETS j3colorstretch DESTINATION bin)

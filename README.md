@@ -17,6 +17,18 @@ There are minor changes and updates to the algorithms, but the major difference 
 - OpenCV (version 3.0.0 or later)
 - cmake (2.8.12 or later)
 
+For example, on a fresh installation of Ubuntu 18.04 Desktop the following installs the requirements:
+```
+sudo apt install build-essential cmake libopencv-dev
+```
+On a macos with homebrew the following command should work:
+```
+brew install cmake opencv
+```
+
+
+
+
 # Compilation
 
 Once the requirements are fulfilled, the code should compile simply by the following sequence
