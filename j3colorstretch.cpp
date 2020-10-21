@@ -145,7 +145,7 @@ int writeJpg(const char* ofile, cv::Mat output)
     return 0;
 }
 
-int readImage(const char* file, cv::Mat& image) {
+int readImage(const char* file, cv::Mat& image) {    
     image = cv::imread(file, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
     if (image.empty()) {
 		std::cout << "Error reading image." << std::endl;
@@ -192,7 +192,8 @@ int main(int argc, char** argv)
                       "{so2 scurveoffset2| 0.22   | scurve offset even iterations}"  
                       "{ccf color      | 1.0    | default enhancement value }" // PUT TOGETHER WITH COLOR FACTOR OF 1.2!!
                       "{ncc nocolorcorrect |     | turn off color correction }"
-                      "{x no-display    |        | no display}";
+                      "{x no-display    |        | no display}"
+                      "{v verbose   |        | print some progress information }";
                       
        
     CustomCLP2 clp(argc, argv, keys);
@@ -204,6 +205,7 @@ int main(int argc, char** argv)
        return 0;
     }
 
+    const bool verbose = clp.get<bool>("verbose");
 	std::string ext = "";
     cv::String outf ;
 	if (clp.has("o")) {
@@ -212,13 +214,13 @@ int main(int argc, char** argv)
 		ext = outf.substr(outf.find_last_of(".")+1);
 		if (ext != "jpg" && ext != "jpeg" && ext != "tif" && ext != "tiff")
 		{
-			std::cout << "Unknown file extension" << std::endl;
+			std::cout << "    Unknown file extension" << std::endl;
 			return -1;
 		}
 		const std::string ofile = std::string(outf.c_str());
 		if ( fexists(ofile) && !clp.get<bool>("f"))
 		{
-			std::cout << "File " << ofile << " exists" << std::endl;
+			std::cout << "    File " << ofile << " exists" << std::endl;
 			return -1;
 		}
 	}
@@ -230,7 +232,8 @@ int main(int argc, char** argv)
 
     //clp.errorCheck();
 
-    cv::Mat thisIma; 
+    cv::Mat thisIma;
+    if(verbose) std::cout << "  Reading image" << clp.pos_args[0].c_str() << std::endl;
     if(readImage(clp.pos_args[0].c_str(),thisIma)<0)
 		return -1;
     
@@ -239,10 +242,11 @@ int main(int argc, char** argv)
 
     if (clp.has("tc"))
     {
+        if(verbose) std::cout << "    Applying tonecurve" << std::endl;
         toneCurve(output_norm,output_norm);
     }
 
-    CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
+    CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     cv::Mat colref;
     if (!clp.has("ncc") && output_norm.channels()==3)
     {   
@@ -257,8 +261,9 @@ int main(int argc, char** argv)
     float rtpwr;
     for(int i=0; i < clp.get<int>("ri"); i++) {
         rtpwr = i != 1 ? rootpower : rootpower2;
+        if(verbose) std::cout << "    Image stretching iteration " << i+1 << std::endl;
         stretching(output_norm, output_norm, rootpower);
-        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
     
     float spwr, soff;
@@ -268,18 +273,19 @@ int main(int argc, char** argv)
     float scurveoff2 = clp.get<float>("so2");
  
     for(int i=0; i < clp.get<int>("si"); i++) {
+        if(verbose) std::cout << "    S-curve iteration " << i+1 << std::endl;
         spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
         soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
         scurve(output_norm, output_norm, spwr, soff);
-        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
  
     float colorcorrectionfactor = clp.get<float>("ccf");
 
     if (!clp.has("ncc") && output_norm.channels()==3)
     {
-        colorcorr(output_norm, output_norm, colref, colorcorrectionfactor);
-        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB);
+        colorcorr(output_norm, output_norm, colref, colorcorrectionfactor, verbose);
+        CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
 
 /*if ( setmin > 0) {   # this makes sure there are no really dark pixels.
@@ -308,6 +314,8 @@ int main(int argc, char** argv)
 	cg = 0 # clear memory
 	cb = 0 # clear memory
 }*/
+
+    if(verbose) std::cout << "  Writing " << outf.c_str() << std::endl;
 
 	if (ext == "jpg" || ext == "jpeg") 
 	{

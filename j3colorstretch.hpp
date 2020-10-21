@@ -109,12 +109,15 @@ void toneCurve(const cv::Mat& inImage, cv::Mat& outImage)
 }
 
 void CVskysub1Ch(const cv::Mat& inImage, cv::Mat& outImage,
-    const float skylevelfactor, const float sky = 4096.0) 
+    const float skylevelfactor, const float sky = 4096.0, const bool out=false) 
 { 
     float zerosky = sky / 65535.0;
     
+    if(out) std::cout << "  Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
     {
+        if(out) std::cout << "|" << std::flush;
+
         cv::Mat histh;
         hist(inImage, histh, true);
         
@@ -135,13 +138,15 @@ void CVskysub1Ch(const cv::Mat& inImage, cv::Mat& outImage,
         cv::subtract(inImage, chistskysub1, outImage);
         cv::multiply(outImage, cfscale, outImage);
     }
+    if(out) std::cout << std::endl;
+
     cv::max(outImage, 0.0, outImage);
 }
 
 void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
     const float skylevelfactor, const float skyLR = 4096.0,
     const float skyLG = 4096.0,
-    const float skyLB = 4096.0) // TBD desired zero point in channels... ---
+    const float skyLB = 4096.0, const bool out=false) // TBD desired zero point in channels... ---
 { 
     if(inImage.channels()==1) {
         CVskysub1Ch(inImage,  outImage, skylevelfactor, skyLR);
@@ -159,9 +164,11 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
     float zeroskyred = skyLR / 65535.0;
     float zeroskygreen = skyLG / 65535.0;
     float zeroskyblue = skyLB / 65535.0;
-
+    
+    if(out) std::cout << "    Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
     {
+        if(out) std::cout << "|" << std::flush;
         cv::Mat r_hist, g_hist, b_hist;
         hist(r, r_hist, true);
         hist(g, g_hist, true);
@@ -199,6 +206,8 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
         cv::subtract(b, chistblueskysub1, b);
         cv::multiply(b, cfscaleblue, b);
     }
+    if(out) std::cout << std::endl;
+
     std::vector<cv::Mat> channels;
     channels.push_back(b);
     channels.push_back(g);
@@ -278,8 +287,10 @@ void scurve(const cv::Mat& inImage, cv::Mat& outImage, const float xfactor,
 
 void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     const float colorenhance =
-        1.0) // possibly merge colorenhance with colorfactor?!?
+        1.0, const bool verbose=false) // possibly merge colorenhance with colorfactor?!?
 {
+    if(verbose) std::cout << "    Color correction " << std::flush;
+
     cv::Mat bgr_planes[3];
     cv::split(inImage, bgr_planes);
 
@@ -306,6 +317,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     cv::divide(b_bg, r_bg, br);
     cv::divide(gr_ref, gr, grratio);
     cv::divide(br_ref, br, brratio);
+    if(verbose) std::cout << "|" << std::flush;
 
     cv::Mat rg_ref, rg, bg_ref, bg, bgratio, rgratio;
     cv::divide(rref_bg, gref_bg, rg_ref);
@@ -314,6 +326,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     cv::divide(b_bg, g_bg, bg);
     cv::divide(rg_ref, rg, rgratio);
     cv::divide(bg_ref, bg, bgratio);
+    if(verbose) std::cout << "|" << std::flush;
 
     cv::Mat rb_ref, rb, gb_ref, gb, gbratio, rbratio;
     cv::divide(rref_bg, bref_bg, rb_ref);
@@ -326,6 +339,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     float zmin = 0.2;
     float zmax = 1.2;
 
+    if(verbose) std::cout << "|" << std::flush;
     cv::max(grratio, zmin, grratio);
     cv::min(grratio, zmax, grratio);
 
@@ -357,6 +371,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     cv::divide(lum, 1.3, lum);
 
     const float cfactor = 1.2;
+    if(verbose) std::cout << "|" << std::flush;
 
     cv::Mat cfe;
     cv::multiply(lum, cfactor * colorenhance, cfe);
@@ -381,6 +396,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     cv::add(bgratio, 1.0, bgratio);
     cv::add(gbratio, 1.0, gbratio);
     cv::add(rbratio, 1.0, rbratio);
+    if(verbose) std::cout << "|" << std::flush;
 
     cv::Mat c2gr, c3br, c1rg, c3bg, c1rb, c2gb;
 
@@ -392,6 +408,8 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
 
     cv::multiply(r_bg, rbratio, c1rb);
     cv::multiply(g_bg, gbratio, c2gb);
+
+    if(verbose) std::cout << "|" << std::flush;
 
     for (int row = 0; row < r_bg.rows; row++)
     {
@@ -405,7 +423,6 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
         float* c3bg_ptr = c3bg.ptr<float>(row);
         float* c1rb_ptr = c1rb.ptr<float>(row);
         float* c2gb_ptr = c2gb.ptr<float>(row);
-
 
         for (int col = 0; col < r_bg.cols; col++)
         {
@@ -438,9 +455,11 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
             c2gb_ptr++;
         }
     }
+    if(verbose) std::cout << "|" << std::flush;
     std::vector<cv::Mat> channels;
     channels.push_back(b_bg);
     channels.push_back(g_bg);
     channels.push_back(r_bg);
     cv::merge(channels, outImage);
+    if(verbose) std::cout << std::endl;
 }

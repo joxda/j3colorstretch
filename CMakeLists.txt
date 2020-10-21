@@ -10,9 +10,8 @@ set (OpenCV_DIR "/usr/local/Cellar/opencv/*/lib/cmake/opencv4/")
 
 FIND_PACKAGE( OpenCV REQUIRED )
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
 
