@@ -22,11 +22,16 @@ shift
 shift
 shift
 
+cmd=j3colorstretch
+[[ $(type -P "$cmd") ]] ||  { echo "  $cmd is NOT in PATH. Did you run 'sudo make install'?" 1>&2; exit 1; }
+
 dcraw=false
 if [[ $1 == "dcraw" ]]; then
     shift
     dcraw=true
-    temp_dir=`mktemp -d` 
+    cmd=dcraw
+    [[ $(type -P "$cmd") ]]  ||  { echo "  $cmd is NOT in PATH" 1>&2; exit 1; }
+    temp_dir=`mktemp -d`
 fi
 
 found_no_file=true
@@ -38,10 +43,10 @@ while read -r -d $'\0' file; do
   filename="${filename%.*}"
 
   if [ "$dcraw" = true ] ; then
-    echo dcraw -4 -T -c "${file} -x > ${temp_dir}/${filename}_j3cs.tiff"
-    echo j3colorstretch "${temp_dir}/${filename}_j3cs.tiff ${@}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    dcraw -4 -T -c "${file}" > "${temp_dir}/${filename}_j3cs.tiff"
+    j3colorstretch "${temp_dir}/${filename}_j3cs.tiff ${@}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
   else
-    echo j3colorstretch "${file}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    j3colorstretch "${file}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
   fi
 done < <(find "$DIR" -maxdepth 1 \( -iname \*.${EXT} \) -print0)
 

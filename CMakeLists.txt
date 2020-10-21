@@ -26,3 +26,4 @@ TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAK
 target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
 
 install(TARGETS j3colorstretch DESTINATION bin)
+install(PROGRAMS batch-stretch DESTINATION bin)
