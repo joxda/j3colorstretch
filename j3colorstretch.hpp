@@ -52,7 +52,7 @@ inline int skyDN(const cv::Mat& hist, const float skylevel)
 {
     cv::Point maxloc;
     int chistskydn = 0;
-    cv::minMaxLoc(hist, 0, 0, 0, &maxloc);         // TBD WHAT IF NOT FOUND?
+    cv::minMaxLoc(hist, 0, 0, 0, &maxloc);         
     const float* p = hist.ptr<float>(0, maxloc.y); 
     for (int ih = maxloc.y; ih >= 2; ih--)
     {
@@ -74,8 +74,8 @@ inline int skyDN(
     cv::Point maxloc;
     int chistskydn = 0;
     double histGmax;
-    cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc); // TBD WHAT IF NOT FOUND?
-    skylevel = (float)histGmax * skylevelfactor;
+    cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc); 
+    skylevel = (float)histGmax * skylevelfactor;   
 
     const float* p = hist.ptr<float>(0, maxloc.y); 
     for (int ih = maxloc.y; ih >= 2; ih--)
@@ -182,14 +182,20 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
         float skylevel;
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
-        chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
+        chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400; 
         chistredskydn = skyDN(r_hist_cropped, skylevel) + 400;
         chistblueskydn = skyDN(b_hist_cropped, skylevel) + 400;
+
+	    if ( chistredskydn == 0 || chistgreenskydn == 0 || chistblueskydn == 0) {
+            std::cout << "    WARNING: histogram sky level not found" << std::endl;
+            std::cout << "    Try increasing the -zerosky values" << std::endl;
+            break;        
+        }
 
         if (pow(chistgreenskydn - skyLG, 2) <= 100 &&
             pow(chistredskydn - skyLR, 2) <= 100 &&
             pow(chistblueskydn - skyLB, 2) <= 100 && i > 1)
-            break;
+            break; 
 
         float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
         float chistgreenskysub1 = chistgreenskydn / 65535. - zeroskygreen;
@@ -238,9 +244,9 @@ void stretching(
     cv::pow(dim, x, dim);
 
     double immin;
-    cv::minMaxLoc(dim, &immin, 0, 0, 0); // TBD WHAT IF NOT FOUND?
+    cv::minMaxLoc(dim, &immin, 0, 0, 0); 
 
-    immin -= 4096.0 / 65535.;
+    immin -= 4096.0 / 65535.;               
     immin = immin > 0. ? immin : 0.;
 
     cv::subtract(dim, immin, dim);
@@ -305,6 +311,7 @@ void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
     cv::subtract(bgr_planes_ref[2], zeroskyred, rref_bg);
     cv::subtract(bgr_planes_ref[1], zeroskygreen, gref_bg);
     cv::subtract(bgr_planes_ref[0], zeroskyblue, bref_bg);
+    if(verbose) std::cout << "|" << std::flush;
 
     cv::Mat r_bg = bgr_planes[2];
     cv::Mat g_bg = bgr_planes[1];
