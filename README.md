@@ -94,7 +94,13 @@ j3colorstretch [parameters] IMAGEFILENAME
 
 The software should work with any file format that is understood by OpenCV, but in the most common usage case it will be a 16bit per channel RGB tiff file.
 
+# Batch processing
 
+A bash script ```batch-stretch``` is provided for batch processing. It includes an option to convert raw images with ```dcraw``` before running ```j3colorstretch```. Its call sequence is:
 
+```
+batch-stretch dir ext (tif or jpg) [dcraw] [j3colorstretch parameters]
+```
+It searches images with the extension ```ext``` in the directory ```dir``` and runs (```dcraw``` if the optional ```dcraw``` parameter is given) and ```j3colorstretch``` on them with the given optional parameters and saves the outputs as jpg or tif in the same directory as the original images.
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H5250BJ)
