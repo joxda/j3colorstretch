@@ -12,6 +12,11 @@ if [ "$#" -le 2 ] || ! [ -d "$1" ]; then
     echo "  in tif (16bit) or jpg. Optionally dcraw can be run before, e.g. to convert"
     echo "  raw data to the tif file format, which can be processed by j3colorstretch."
     echo
+    echo "  Note that the script sets the color multipliers for the daylight white"
+    echo "  balance for my camera. You can probably find the values for yours by running"
+    echo "  dcraw on an photo with your camera and white balance setting and the options"
+    echo "  -v -w"    
+    echo
     exit 1
 fi
 
@@ -43,10 +48,10 @@ while read -r -d $'\0' file; do
   filename="${filename%.*}"
 
   if [ "$dcraw" = true ] ; then
-    dcraw -4 -T -c "${file}" > "${temp_dir}/${filename}_j3cs.tiff"
-    j3colorstretch "${temp_dir}/${filename}_j3cs.tiff ${@}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    dcraw -4 -T -c -r 1.961914 1.0 1.632813 1.0 "${file}" > "${temp_dir}/${filename}_j3cs.tiff"
+    j3colorstretch "${temp_dir}/${filename}_j3cs.tiff ${@}" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
   else
-    j3colorstretch "${file}" -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    j3colorstretch "${file}" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
   fi
 done < <(find "$DIR" -maxdepth 1 \( -iname \*.${EXT} \) -print0)
 
