@@ -101,6 +101,6 @@ A bash script ```batch-stretch``` is provided for batch processing. It includes 
 ```
 batch-stretch dir ext (tif or jpg) [dcraw] [j3colorstretch parameters]
 ```
-It searches images with the extension ```ext``` in the directory ```dir``` and runs (```dcraw``` if the optional ```dcraw``` parameter is given) and ```j3colorstretch``` on them with the given optional parameters and saves the outputs as jpg or tif in the same directory as the original images.
+It searches images with the extension ```ext``` in the directory ```dir``` and runs (```dcraw``` if the optional dcraw parameter is given and) ```j3colorstretch``` on them with the given optional parameters and saves the outputs as jpg or tif in the same directory as the original images.
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H5250BJ)
