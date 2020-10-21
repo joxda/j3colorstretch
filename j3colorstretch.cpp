@@ -133,12 +133,12 @@ int writeJpg(const char* ofile, cv::Mat output)
     cv::Mat out;
     if (output.channels() == 3)
     {
-        output.convertTo(out, CV_16UC3, 255.);
+        output.convertTo(out, CV_8UC3, 255.);
     }
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_16UC1, 1, 255.); // TBD  factor?
+            out, CV_8UC1, 1, 255.); // TBD  factor?
     }
 
     cv::imwrite(ofile, out);
