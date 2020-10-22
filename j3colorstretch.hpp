@@ -182,14 +182,14 @@ void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
         float skylevel;
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
-        chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400; 
+        chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
         chistredskydn = skyDN(r_hist_cropped, skylevel) + 400;
         chistblueskydn = skyDN(b_hist_cropped, skylevel) + 400;
 
-	    if ( chistredskydn == 0 || chistgreenskydn == 0 || chistblueskydn == 0) {
+	    if (  i>1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400)) {
             std::cout << "    WARNING: histogram sky level not found" << std::endl;
             std::cout << "    Try increasing the -zerosky values" << std::endl;
-            break;        
+           // break;        
         }
 
         if (pow(chistgreenskydn - skyLG, 2) <= 100 &&
