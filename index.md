@@ -82,7 +82,7 @@ Two iterations of root stretches, two iterations of s-curves and color enhanced 
 ![M42_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)
 
 ## How to obtain
-You can try the binaries provided [here](https://github.com/joxda/j3colorstretch/releases/tag/v1.0.0).
+You can try the binaries provided [here](https://github.com/joxda/j3colorstretch/releases/).
 These were compiled and statically linked to the OpenCV libraries on Ubuntu 18.04 and macOS Catalina so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`tar xzvf j3colorstretch*tgz`) and move the batch script and j3colorstretch binary to your PATH. Alternatively you can download the source code from the [github pages](https://github.com/joxda/j3colorstretch) and follow the instructions for compiling and installing there.
 
 
