@@ -12,7 +12,13 @@ The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be obt
 
 There are minor changes and updates to the algorithms, but the major difference is that this program here does not rely on davinci. It is coded with c++ using OpenCV and is significantly faster.
 
-# Requirements
+
+# How to obtain
+
+You can try the binaries provided here: https://github.com/joxda/j3colorstretch/releases/tag/v1.0.0
+These were compiled and statically linked to the OpenCV libraries on Ubuntu 18.04 and macOS Catalina so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`tar xzvf j3colorstretch*tgz`) and move the batch script and j3colorstretch binary to your PATH. Alternatively you can download the source code from here and follow the instructions for compiling and installing below.
+
+# Requirements for compilation
 
 - OpenCV (version 3.0.0 or later)
 - cmake (2.8.12 or later)
@@ -25,8 +31,6 @@ On a macos with homebrew the following command should work:
 ```
 brew install cmake opencv
 ```
-
-
 
 
 # Compilation
