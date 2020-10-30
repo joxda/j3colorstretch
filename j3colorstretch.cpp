@@ -23,6 +23,7 @@
 
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
+#include <opencv2/core/ocl.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -195,7 +196,8 @@ int main(int argc, char** argv)
                       "{x no-display    |        | no display}"
                       "{v verbose   |        | print some progress information }";
                       
-       
+    cv::ocl::setUseOpenCL(true);
+
     CustomCLP2 clp(argc, argv, keys);
     
     long int N = clp.n_positional_args();
@@ -237,7 +239,7 @@ int main(int argc, char** argv)
     if(readImage(clp.pos_args[0].c_str(),thisIma)<0)
 		return -1;
     
-    cv::Mat output_norm;
+    cv::UMat output_norm;
     cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD
 
     if (clp.has("tc"))
@@ -247,7 +249,7 @@ int main(int argc, char** argv)
     }
 
     CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
-    cv::Mat colref;
+    cv::UMat colref;
     if (!clp.has("ncc") && output_norm.channels()==3)
     {   
         colref = output_norm.clone();
@@ -319,9 +321,9 @@ int main(int argc, char** argv)
 
 	if (ext == "jpg" || ext == "jpeg") 
 	{
-		writeJpg(outf.c_str(), output_norm); 
+		writeJpg(outf.c_str(), output_norm.getMat(cv::ACCESS_READ)); 
 	} else if (ext == "tif" || ext == "tiff") {
-		writeTif(outf.c_str(), output_norm);
+		writeTif(outf.c_str(), output_norm.getMat(cv::ACCESS_READ));
 	} else {
 		cv::Mat c3;
     	output_norm.convertTo(c3, CV_8UC3, 255.);

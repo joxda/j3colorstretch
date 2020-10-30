@@ -50,7 +50,9 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
 void stretching(
     cv::InputArray inImage, cv::OutputArray outImage, const double rootpower);
 
-void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfactor,
+void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float skyLR = 4096.0,
+    const float skyLG = 4096.0,
+    const float skyLB = 4096.0, const float xfactor,
     const float xoffset);
 
 void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outImage, 
