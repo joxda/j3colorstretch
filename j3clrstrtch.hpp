@@ -31,29 +31,29 @@
 
 #include "opencv2/core.hpp"
 
-void hist(const cv::Mat& image, cv::Mat& hist, const bool blur);
+void hist(cv::InputArray image, cv::OutputArray hist, const bool blur);
 
-inline int skyDN(const cv::Mat& hist, const float skylevel);
+inline int skyDN(cv::InputArray hist, const float skylevel);
 inline int skyDN(
-    const cv::Mat& hist, const float skylevelfactor, float& skylevel);
+    cv::InputArray hist, const float skylevelfactor, float& skylevel);
 
 
-void toneCurve(const cv::Mat& inImage, cv::Mat& outImage);
+void toneCurve(cv::InputArray inImage, cv::OutputArray outImage);
 
-void CVskysub1Ch(const cv::Mat& inImage, cv::Mat& outImage,
+void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
     const float skylevelfactor, const float sky = 4096.0, const bool out=false);
-void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
+void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     const float skylevelfactor, const float skyLR = 4096.0,
     const float skyLG = 4096.0,
     const float skyLB = 4096.0, const bool out=false);
 
 void stretching(
-    const cv::Mat& inImage, cv::Mat& outImage, const double rootpower);
+    cv::InputArray inImage, cv::OutputArray outImage, const double rootpower);
 
-void scurve(const cv::Mat& inImage, cv::Mat& outImage, const float xfactor,
+void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfactor,
     const float xoffset);
 
-void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
+void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outImage, 
     const float colorenhance =
         1.0, const bool verbose=false);
 
