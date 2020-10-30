@@ -1,0 +1,60 @@
+/*******************************************************************************
+  Copyright(c) 2020 Joachim Janz. All rights reserved.
+ 
+  The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be 
+  obtained from 
+  https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/  
+  and which is licenced under the GPL.
+  
+  This program is free software; you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your option)
+  any later version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  more details.
+
+  You should have received a copy of the GNU Library General Public License
+  along with this library; see the file COPYING.LIB.  If not, write to
+  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.
+
+  The full GNU General Public License is included in this distribution in the
+  file called LICENSE.
+
+*******************************************************************************/
+
+#ifndef libj3colorstretch_hpp
+#define libj3colorstretch_hpp
+
+#include "opencv2/core.hpp"
+
+void hist(const cv::Mat& image, cv::Mat& hist, const bool blur);
+
+inline int skyDN(const cv::Mat& hist, const float skylevel);
+inline int skyDN(
+    const cv::Mat& hist, const float skylevelfactor, float& skylevel);
+
+
+void toneCurve(const cv::Mat& inImage, cv::Mat& outImage);
+
+void CVskysub1Ch(const cv::Mat& inImage, cv::Mat& outImage,
+    const float skylevelfactor, const float sky = 4096.0, const bool out=false);
+void CVskysub(const cv::Mat& inImage, cv::Mat& outImage,
+    const float skylevelfactor, const float skyLR = 4096.0,
+    const float skyLG = 4096.0,
+    const float skyLB = 4096.0, const bool out=false);
+
+void stretching(
+    const cv::Mat& inImage, cv::Mat& outImage, const double rootpower);
+
+void scurve(const cv::Mat& inImage, cv::Mat& outImage, const float xfactor,
+    const float xoffset);
+
+void colorcorr(const cv::Mat& inImage, cv::Mat& outImage, const cv::Mat& ref,
+    const float colorenhance =
+        1.0, const bool verbose=false);
+
+#endif /* libj3colorstretch_hpp */

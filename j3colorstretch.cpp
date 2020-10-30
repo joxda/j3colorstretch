@@ -28,7 +28,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "j3colorstretch.hpp"
+#include "j3clrstrtch.hpp"
 
 
 inline std::string trim(const std::string& s)
