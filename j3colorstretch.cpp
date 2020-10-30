@@ -286,7 +286,7 @@ int main(int argc, char** argv)
 
     if (!clp.has("ncc") && output_norm.channels()==3)
     {
-        colorcorr(output_norm, output_norm, colref, colorcorrectionfactor, verbose);
+        colorcorr(output_norm, output_norm, colref, skyLR, skyLG, skyLB, colorcorrectionfactor, verbose);
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
 
