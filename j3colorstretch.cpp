@@ -247,7 +247,7 @@ int main(int argc, char** argv)
     }
 
     CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
-    cv::Mat colref;
+ /*   cv::Mat colref;
     if (!clp.has("ncc") && output_norm.channels()==3)
     {   
         colref = output_norm.clone();
@@ -287,7 +287,7 @@ int main(int argc, char** argv)
         colorcorr(output_norm, output_norm, colref, colorcorrectionfactor, verbose);
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
-
+*/
 /*if ( setmin > 0) {   # this makes sure there are no really dark pixels.
 			# this happens typically from noise and color matrix
 			# application (in the raw converter) around stars showing
