@@ -241,8 +241,8 @@ void stretching(
         dim = inImageA.getUMat();
     }
 
-    cv::add(dim, 1.0 / 65535.0, dim);
-    cv::divide(dim, (1. + 1.0 / 65535.), dim);
+    cv::add(dim, 1.0 / 65536.0, dim);
+    //cv::divide(dim, (1. + 1.0 / 65535.), dim);
     cv::pow(dim, x, dim);
 
     double immin;
@@ -391,7 +391,7 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     cv::Mat cfe;
     cv::multiply(lum, cfactor * colorenhance, cfe);
 
-    const float ref_limit = 10./65355.;
+    const float ref_limit = 10./65535.;
 
     cv::setNumThreads(-1);
 
