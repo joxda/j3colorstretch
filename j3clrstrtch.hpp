@@ -36,6 +36,7 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur);
 inline int skyDN(
     cv::InputArray hist, const float skylevelfactor, float& skylevel);
 
+void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, const float ming, const float minb);
 
 void toneCurve(cv::InputArray inImage, cv::OutputArray outImage);
 

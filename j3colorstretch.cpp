@@ -189,7 +189,10 @@ int main(int argc, char** argv)
                       "{ccf color      | 1.0    | default enhancement value }" // PUT TOGETHER WITH COLOR FACTOR OF 1.2!!
                       "{ncc nocolorcorrect |     | turn off color correction }"
                       "{x no-display    |        | no display}"
-                      "{v verbose   |        | print some progress information }";
+                      "{v verbose   |        | print some progress information }"
+                      "{minr   |        | set minimum r }"
+                      "{ming   |        | set minimum g }"
+                      "{minb   |        | set minimum b }";
                       
     cv::ocl::setUseOpenCL(true);
 
@@ -277,6 +280,13 @@ int main(int argc, char** argv)
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
  
+    if(clp.has("minr") || clp.has("minb") || clp.has("ming")) {
+        const float minr = clp.get<float>("minr") / 65355.;
+        const float ming = clp.get<float>("ming") / 65355.;
+        const float minb = clp.get<float>("minb") / 65355.;
+        setMin(output_norm, output_norm, minr, ming, minb);
+    }
+
     float colorcorrectionfactor = clp.get<float>("ccf");
 
     if (!clp.has("ncc") && output_norm.channels()==3)
@@ -284,33 +294,6 @@ int main(int argc, char** argv)
         colorcorr(output_norm, colref, output_norm,  skyLR, skyLG, skyLB, colorcorrectionfactor, verbose);
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
     }
-
-/*if ( setmin > 0) {   # this makes sure there are no really dark pixels.
-			# this happens typically from noise and color matrix
-			# application (in the raw converter) around stars showing
-			# chromatic aberration.
-	printf ("applying set minimum after color correction\n")
-	printf ("minimum RGB levels on output= %f %f %f\n", setminr, setming, setminb)
-	cr=c[,,1]  # red
-	cg=c[,,2]  # green
-	cb=c[,,3]  # blue
-
-	zx = 0.2  # keep some of the low level, which is noise, so it looks more natural.
-
-	cr[ where ( cr < setminr )] = setminr + zx * cr   # minimum for red
-	cg[ where ( cg < setming )] = setming + zx * cg   # minimum for green
-	cb[ where ( cb < setminb )] = setminb + zx * cg   # minimum for blue
-
-	# now put back together
-
-	c=cat(cr,cg, axis=z)
-	c=cat(c, cb, axis=z)
-	c=bip(c)
-
-	cr = 0 # clear memory
-	cg = 0 # clear memory
-	cb = 0 # clear memory
-}*/
 
     if(verbose) std::cout << "  Writing " << outf.c_str() << std::endl;
 

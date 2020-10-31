@@ -264,6 +264,61 @@ void stretching(
     }
 }
 
+void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, const float ming, const float minb)
+{
+    std::vector<cv::Mat> bgr_planes(3);
+
+    cv::split(inImage, bgr_planes);
+
+    cv::Mat r_bg = bgr_planes[2];
+    cv::Mat g_bg = bgr_planes[1];
+    cv::Mat b_bg = bgr_planes[0];
+
+	const float zx = 0.2;  // keep some of the low level, which is noise, so it looks more natural.
+
+    cv::setNumThreads(-1);
+
+    const int split = 7;
+    const int row_split = r_bg.rows/split;
+
+    parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
+        for (int n = range.start; n < range.end; n++)
+        {
+            int start = n * row_split;
+            int stop = start + row_split;
+            stop = stop < r_bg.rows ? stop : r_bg.rows;
+
+            for (int row = start; row < stop; row++) 
+            {
+                float* r = r_bg.ptr<float>(row);
+                float* g = g_bg.ptr<float>(row);
+                float* b = b_bg.ptr<float>(row);
+
+
+
+                for (int col = 0; col < r_bg.cols; col++)
+                {
+                    if ( *r < minr ) minr * zx * *r;
+                    if ( *g < minr ) ming * zx * *g;
+                    if ( *b < minr ) minb * zx * *b;
+
+                    r++;
+                    g++;
+                    b++;
+                }
+
+            }       
+        }
+    }, 8);
+
+    std::vector<cv::Mat> channels;
+    channels.push_back(b_bg);
+    channels.push_back(g_bg);
+    channels.push_back(r_bg);
+
+    cv::merge(channels, outImage);
+}
+
 void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfactor,
     const float xoffset)
 {
