@@ -15,10 +15,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
 
-add_executable( j3colorstretch j3colorstretch.cpp  )
+add_executable( j3colorstretch j3colorstretch.cpp j3clrstrtch.cpp )
 set_property(TARGET j3colorstretch PROPERTY CXX_STANDARD 11)
 
-add_library( j3clrstrtch j3clrstrtch.cpp  )
+add_library( j3clrstrtch EXCLUDE_FROM_ALL j3clrstrtch.cpp )
 set_property(TARGET j3clrstrtch PROPERTY CXX_STANDARD 11)
 
 TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} )
@@ -26,8 +26,9 @@ TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAK
 #set(MY_OpenCV_LIBS "opencv_core;opencv_highgui;")
 
 target_link_libraries( j3clrstrtch  ${OpenCV_LIBS} )
-target_link_libraries( j3colorstretch  ${OpenCV_LIBS} j3clrstrtch)
+target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
 
 install(TARGETS j3colorstretch DESTINATION bin)
 install(TARGETS j3clrstrtch DESTINATION lib)
 install(PROGRAMS batch-stretch DESTINATION bin)
+
