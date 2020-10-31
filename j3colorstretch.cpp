@@ -281,9 +281,9 @@ int main(int argc, char** argv)
     }
  
     if(clp.has("minr") || clp.has("minb") || clp.has("ming")) {
-        const float minr = clp.get<float>("minr") / 65355.;
-        const float ming = clp.get<float>("ming") / 65355.;
-        const float minb = clp.get<float>("minb") / 65355.;
+        const float minr = clp.get<float>("minr") / 65535.;
+        const float ming = clp.get<float>("ming") / 65535.;
+        const float minb = clp.get<float>("minb") / 65535.;
         setMin(output_norm, output_norm, minr, ming, minb);
     }
 
