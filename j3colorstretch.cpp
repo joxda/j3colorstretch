@@ -25,7 +25,6 @@
 #include "opencv2/highgui.hpp"
 #include <opencv2/core/ocl.hpp>
 
-#include <algorithm>
 #include <iostream>
 #include <fstream>
 
@@ -122,7 +121,7 @@ int writeTif(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_16UC1, 1, 65535.); // TBD factor?
+            out, CV_16UC1, 1, 65535.); 
     }
 
     cv::imwrite(ofile, out);
@@ -139,7 +138,7 @@ int writeJpg(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_8UC1, 1, 255.); // TBD  factor?
+            out, CV_8UC1, 1, 255.); 
     }
 
     cv::imwrite(ofile, out);
@@ -156,14 +155,10 @@ int readImage(const char* file, cv::Mat& image) {
     if (image.channels() == 1)
         {
             image.convertTo(image, CV_32FC1);
-            cv::normalize(image, image, 0.0, 1.0, cv::NORM_MINMAX);
-            // TBD FACTOR
         }
         else
         {
-            image.convertTo(image, CV_32FC3); // TBD FACTOR...
-            cv::normalize(image, image, 0.0, 1.0, cv::NORM_MINMAX);
-
+            image.convertTo(image, CV_32FC3); 
         }
     return 0;
 }
@@ -240,7 +235,7 @@ int main(int argc, char** argv)
 		return -1;
     
     cv::UMat output_norm;
-    cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD
+    cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD factor
 
     if (clp.has("tc"))
     {

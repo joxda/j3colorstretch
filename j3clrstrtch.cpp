@@ -29,10 +29,10 @@
 
 #include "opencv2/imgproc.hpp"
 #include <iostream>
+#include "opencv2/highgui.hpp"
 
 #include <chrono>
 
-// TBD CHECK THAT COLORCORR DOES SOMETHING USEFUL!!
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 {
     cv::Mat ima = image.getMat();
@@ -46,66 +46,52 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 
     if (blur)
     {
-        cv::blur(hist, hist, cv::Size(1, 601), cv::Point(-1, -1),
+        cv::blur(hist, hist, cv::Size(1, 301), cv::Point(-1, -1),
             cv::BORDER_ISOLATED);
     }
 }
 
 
 // Should the split images be used troughout??!
-// Merge these two together?
-// Optimize search?
 // plot histograms for checking...?
 // would it be benefitial to use calcHist on all channels and
 //    to run through the for loop once?
 //    or to use parallel_for_?
-inline int skyDN(cv::InputArray inHist, const float skylevel)
-{
-    cv::Mat hist = inHist.getMat();
-    cv::Point maxloc;
-    int chistskydn = 0;
-    cv::minMaxLoc(hist, 0, 0, 0, &maxloc);         
-    const float* p = hist.ptr<float>(0, maxloc.y); 
-    for (int ih = maxloc.y; ih >= 2; ih--)
-    {
-        float top = *p;
-        *p--;
-        float bottom = *p;
-        if (top >= skylevel && bottom <= skylevel)
-        {
-            chistskydn = ih;
-            break;
-        }
-    }
-    return chistskydn;
-}
 
 inline int skyDN(
     cv::InputArray inHist, const float skylevelfactor, float& skylevel)
 {
     cv::Mat hist = inHist.getMat();
+
     cv::Point maxloc;
     int chistskydn = 0;
     double histGmax;
 
     cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc); 
-    skylevel = (float)histGmax * skylevelfactor;   
-
-    const float* p = hist.ptr<float>(0, maxloc.y); 
-    for (int ih = maxloc.y; ih >= 2; ih--)
-    {
-        float top = *p;
-        *p--;
-        float bottom = *p;
-        if (top >= skylevel && bottom <= skylevel)
-        {
-            chistskydn = ih;
-            break;
-        }
+    if(skylevel < 0) {
+        skylevel = (float)histGmax * skylevelfactor;   
     }
+    const float* p = hist.ptr<float>(0, maxloc.y); 
+    
+    int lower = 2;
+    int upper = maxloc.y;
+    int diff = upper - lower;
+    int mid;
+    float* val;
+    while(diff>1) {
+        mid = lower + diff/2;
+        val = hist.ptr<float>(0, mid);
+        if(*val > skylevel) {
+            upper = mid;
+        } else {
+            lower = mid;
+        }
+        diff = upper-lower;
+    }
+    chistskydn = mid;
+
     return chistskydn;
 }
-
 
 void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
 {
@@ -138,7 +124,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
         cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
         cv::Mat hist_cropped = histh(roi);
         
-        float skylevel;
+        float skylevel=-1.;
         int chistskydn;
         chistskydn = skyDN(hist_cropped, skylevelfactor, skylevel) + 400;
         
@@ -194,12 +180,12 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         cv::UMat g_hist_cropped = g_hist(roi);
         cv::UMat b_hist_cropped = b_hist(roi);
 
-        float skylevel;
+        float skylevel = -1.;
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
         chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
-        chistredskydn = skyDN(r_hist_cropped, skylevel) + 400;
-        chistblueskydn = skyDN(b_hist_cropped, skylevel) + 400;
+        chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
+        chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
 
 	    if (  i>1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400)) {
             std::cout << "    WARNING: histogram sky level not found" << std::endl;
@@ -207,9 +193,9 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
            // break;        
         }
 
-        if (pow(chistgreenskydn - skyLG, 2) <= 100 &&
-            pow(chistredskydn - skyLR, 2) <= 100 &&
-            pow(chistblueskydn - skyLB, 2) <= 100 && i > 1)
+        if (pow(chistgreenskydn - skyLG, 2) <= 10 &&
+            pow(chistredskydn - skyLR, 2) <= 10 &&
+            pow(chistblueskydn - skyLB, 2) <= 10 && i > 1)
             break; 
 
         float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
@@ -314,8 +300,6 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
 {
     if(verbose) std::cout << "    Color correction " << std::flush;
     
-    auto start = std::chrono::steady_clock::now();
-
     cv::Mat inIma = inImage.getMat();
 
     cv::Mat bgr_planes[3];
@@ -446,7 +430,7 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     cv::merge(channels, outImage) ;
     if(verbose) std::cout << std::endl;
 
-    auto end = std::chrono::steady_clock::now();
-    auto diff = end - start;
-    std::cout << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
+    //auto end = std::chrono::steady_clock::now();
+    //auto diff = end - start;
+    //std::cout << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
 }

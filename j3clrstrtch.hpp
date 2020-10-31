@@ -33,7 +33,6 @@
 
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur);
 
-inline int skyDN(cv::InputArray hist, const float skylevel);
 inline int skyDN(
     cv::InputArray hist, const float skylevelfactor, float& skylevel);
 
