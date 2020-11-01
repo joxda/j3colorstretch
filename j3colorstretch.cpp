@@ -23,12 +23,12 @@
 
 #include "opencv2/core.hpp"
 #include "opencv2/highgui.hpp"
+#include <opencv2/core/ocl.hpp>
 
-#include <algorithm>
 #include <iostream>
 #include <fstream>
 
-#include "j3colorstretch.hpp"
+#include "j3clrstrtch.hpp"
 
 
 inline std::string trim(const std::string& s)
@@ -121,12 +121,14 @@ int writeTif(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_16UC1, 1, 65535.); // TBD factor?
+            out, CV_16UC1, 1, 65535.); 
     }
 
     cv::imwrite(ofile, out);
     return 0;
 }
+
+
 
 int writeJpg(const char* ofile, cv::Mat output)
 {
@@ -138,7 +140,7 @@ int writeJpg(const char* ofile, cv::Mat output)
     if (output.channels() == 1)
     {
         output.convertTo(
-            out, CV_8UC1, 1, 255.); // TBD  factor?
+            out, CV_8UC1, 1, 255.); 
     }
 
     cv::imwrite(ofile, out);
@@ -155,14 +157,10 @@ int readImage(const char* file, cv::Mat& image) {
     if (image.channels() == 1)
         {
             image.convertTo(image, CV_32FC1);
-            cv::normalize(image, image, 0.0, 1.0, cv::NORM_MINMAX);
-            // TBD FACTOR
         }
         else
         {
-            image.convertTo(image, CV_32FC3); // TBD FACTOR...
-            cv::normalize(image, image, 0.0, 1.0, cv::NORM_MINMAX);
-
+            image.convertTo(image, CV_32FC3); 
         }
     return 0;
 }
@@ -193,9 +191,14 @@ int main(int argc, char** argv)
                       "{ccf color      | 1.0    | default enhancement value }" // PUT TOGETHER WITH COLOR FACTOR OF 1.2!!
                       "{ncc nocolorcorrect |     | turn off color correction }"
                       "{x no-display    |        | no display}"
-                      "{v verbose   |        | print some progress information }";
+                      "{v verbose   |        | print some progress information }"
+                      "{minr   |        | set minimum r }"
+                      "{ming   |        | set minimum g }"
+                      "{minb   |        | set minimum b }"
+                      "{bp blackpoint   |     0   | set blackpoint (in units..) }";
                       
-       
+    cv::ocl::setUseOpenCL(true);
+
     CustomCLP2 clp(argc, argv, keys);
     
     long int N = clp.n_positional_args();
@@ -237,8 +240,10 @@ int main(int argc, char** argv)
     if(readImage(clp.pos_args[0].c_str(),thisIma)<0)
 		return -1;
     
-    cv::Mat output_norm;
-    cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD
+    cv::UMat output_norm;
+    cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD factor
+
+    if(!clp.has("x"))    showHist(output_norm,"Input Image");
 
     if (clp.has("tc"))
     {
@@ -247,11 +252,13 @@ int main(int argc, char** argv)
     }
 
     CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
-    cv::Mat colref;
+    cv::UMat colref;
     if (!clp.has("ncc") && output_norm.channels()==3)
     {   
         colref = output_norm.clone();
     }
+
+    if(!clp.has("x"))    showHist(output_norm,"Skysub");
 
     float rootpower = clp.get<float>("rp");
     float rootpower2 = rootpower;
@@ -263,9 +270,13 @@ int main(int argc, char** argv)
         rtpwr = i != 1 ? rootpower : rootpower2;
         if(verbose) std::cout << "    Image stretching iteration " << i+1 << std::endl;
         stretching(output_norm, output_norm, rootpower);
+        if(!clp.has("x"))    showHist(output_norm,"Stretched");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skysub");
     }
+
     
+   
     float spwr, soff;
     float scurvepower1 = clp.get<float>("sc");
     float scurvepower2 = clp.get<float>("sc2");
@@ -277,51 +288,42 @@ int main(int argc, char** argv)
         spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
         soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
         scurve(output_norm, output_norm, spwr, soff);
+        if(!clp.has("x"))    showHist(output_norm,"S-curve");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skysub");
     }
  
+    if(clp.has("minr") || clp.has("minb") || clp.has("ming")) {
+        const float minr = clp.get<float>("minr") / 65535.;
+        const float ming = clp.get<float>("ming") / 65535.;
+        const float minb = clp.get<float>("minb") / 65535.;
+        setMin(output_norm, output_norm, minr, ming, minb);
+        if(!clp.has("x"))    showHist(output_norm,"Set min");
+    }
+
+    
     float colorcorrectionfactor = clp.get<float>("ccf");
 
     if (!clp.has("ncc") && output_norm.channels()==3)
     {
-        colorcorr(output_norm, output_norm, colref, colorcorrectionfactor, verbose);
+        colorcorr(output_norm, colref, output_norm,  skyLR, skyLG, skyLB, colorcorrectionfactor, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Color corrected");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skubsub");
     }
 
-/*if ( setmin > 0) {   # this makes sure there are no really dark pixels.
-			# this happens typically from noise and color matrix
-			# application (in the raw converter) around stars showing
-			# chromatic aberration.
-	printf ("applying set minimum after color correction\n")
-	printf ("minimum RGB levels on output= %f %f %f\n", setminr, setming, setminb)
-	cr=c[,,1]  # red
-	cg=c[,,2]  # green
-	cb=c[,,3]  # blue
-
-	zx = 0.2  # keep some of the low level, which is noise, so it looks more natural.
-
-	cr[ where ( cr < setminr )] = setminr + zx * cr   # minimum for red
-	cg[ where ( cg < setming )] = setming + zx * cg   # minimum for green
-	cb[ where ( cb < setminb )] = setminb + zx * cg   # minimum for blue
-
-	# now put back together
-
-	c=cat(cr,cg, axis=z)
-	c=cat(c, cb, axis=z)
-	c=bip(c)
-
-	cr = 0 # clear memory
-	cg = 0 # clear memory
-	cb = 0 # clear memory
-}*/
-
+    // TBD include option....
+    if(clp.get<float>("bp")>0) {
+        setBlackPoint(output_norm, output_norm, clp.get<float>("bp")*4096/65535.);
+        if(!clp.has("x"))    showHist(output_norm,"Set blackpoint");
+    }
     if(verbose) std::cout << "  Writing " << outf.c_str() << std::endl;
 
 	if (ext == "jpg" || ext == "jpeg") 
 	{
-		writeJpg(outf.c_str(), output_norm); 
+		writeJpg(outf.c_str(), output_norm.getMat(cv::ACCESS_READ)); 
 	} else if (ext == "tif" || ext == "tiff") {
-		writeTif(outf.c_str(), output_norm);
+		writeTif(outf.c_str(), output_norm.getMat(cv::ACCESS_READ));
 	} else {
 		cv::Mat c3;
     	output_norm.convertTo(c3, CV_8UC3, 255.);
