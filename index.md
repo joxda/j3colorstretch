@@ -71,15 +71,15 @@ A simple strong root stretch with
 
 ### M 45
 Raw image
-![M42_raw](/images/M45_raw.jpg)
+![M45_raw](/images/M45_raw.jpg)
 Two iterations of root stretches with different powers with `j3colorstretch M45.tif --rootpower=100 --rootiter=2 --rootpower2=5 --output=M45_rp100_5.jpg`
-![M42_j3colorstretch](/images/M45_rp100_5.jpg)                                                             
+![M45_j3colorstretch](/images/M45_rp100_5.jpg)                                                             
 
 ### M 31
 Raw image
-![M42_raw](/images/M31_raw.jpg)
-Two iterations of root stretches, two iterations of s-curves and color enhanced with `j3colorstretch -rp=15 -ri=2 --rp2=3 -si=2 -ccf=1.5 -o=M31_rp15_3_s2_c1.5.jpg`
-![M42_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)
+![M31_raw](/images/M31_raw.jpg)
+Two iterations of root stretches, two iterations of s-curves and color enhanced with `j3colorstretch M31.tif -rp=15 -ri=2 --rp2=3 -si=2 -ccf=1.5 -o=M31_rp15_3_s2_c1.5.jpg`
+![M31_j3colorstretch](/images/M31_rp15_3_s2_c1.5.jpg)
 
 ## How to obtain
 You can try the binaries provided [here](https://github.com/joxda/j3colorstretch/releases/).
