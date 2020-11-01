@@ -25,13 +25,28 @@
   file called LICENSE.
 
 *******************************************************************************/
+//adjust blackpoint?
+/*
+Then, for each channel value R, G, B (0-255) for each pixel, do the following in order.
 
+Apply the input levels:
+
+ChannelValue = 255 * ( ( ChannelValue - ShadowValue ) / 
+    ( HighlightValue - ShadowValue ) )
+Apply the midtones:
+
+If Midtones <> 128 Then
+    ChannelValue = 255 * ( Pow( ( ChannelValue / 255 ), GammaCorrection ) )
+End If
+Apply the output levels:
+
+ChannelValue = ( ChannelValue / 255 ) *
+    ( OutHighlightValue - OutShadowValue ) + OutShadowValue*/
 
 #include "opencv2/imgproc.hpp"
 #include <iostream>
 #include "opencv2/highgui.hpp"
-
-#include <chrono>
+//#include <chrono>
 
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 {
@@ -51,9 +66,11 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
     }
 }
 
-
+void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
+    cv::subtract(inImage, cv::Scalar::all(bp), outImage);
+    cv::divide(outImage, cv::Scalar::all(1-bp), outImage);
+}
 // Should the split images be used troughout??!
-// plot histograms for checking...?
 // would it be benefitial to use calcHist on all channels and
 //    to run through the for loop once?
 //    or to use parallel_for_?
@@ -128,7 +145,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
         int chistskydn;
         chistskydn = skyDN(hist_cropped, skylevelfactor, skylevel) + 400;
         
-        if (pow(chistskydn - sky, 2) <= 100)
+        if (pow(chistskydn - sky, 2) <= 25)
             break;
 
         float chistskysub1 = chistskydn / 65535. - zerosky;
@@ -184,18 +201,25 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
         chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
-        chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
-        chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
-
+        
+        parallel_for_(cv::Range(0, 2), [&](const cv::Range& range){
+        for (int n = range.start; n < range.end; n++)
+        {   
+            if(n==1) {
+                chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
+            } else {
+                chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
+            }
+        }},2);
 	    if (  i>1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400)) {
             std::cout << "    WARNING: histogram sky level not found" << std::endl;
             std::cout << "    Try increasing the -zerosky values" << std::endl;
            // break;        
         }
 
-        if (pow(chistgreenskydn - skyLG, 2) <= 10 &&
-            pow(chistredskydn - skyLR, 2) <= 10 &&
-            pow(chistblueskydn - skyLB, 2) <= 10 && i > 1)
+        if (pow(chistgreenskydn - skyLG, 2) <= 25 &&
+            pow(chistredskydn - skyLR, 2) <= 25 &&
+            pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
             break; 
 
         float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
@@ -262,6 +286,48 @@ void stretching(
     {
         dim.copyTo(outImage);
     }
+}
+
+
+void showHist(cv::InputArray im, const char* window) {
+    cv::Mat src = im.getMat();
+    std::vector<cv::Mat> bgr_planes;
+    cv::split( src, bgr_planes );
+    int histSize = 256;
+    float range[] = { 0, 1 }; //the upper boundary is exclusive
+    const float* histRange = { range };
+    bool uniform = true, accumulate = false;
+    cv::Mat b_hist, g_hist, r_hist;
+    calcHist( &bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+    int hist_w = 2048, hist_h = 400;
+    int bin_w = cvRound( (double) hist_w/ (double) histSize );
+    cv::Mat histImage( hist_h, hist_w, CV_8UC3, cv::Scalar( 0,0,0) );
+    cv::normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    for( int i = 1; i < histSize; i++ )
+    {
+        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(b_hist.at<float>(i-1)) ),
+              cv::Point( bin_w*(i), hist_h - cvRound(b_hist.at<float>(i)) ),
+              cv::Scalar( 255, 0, 0), 2, 8, 0  );
+        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(g_hist.at<float>(i-1)) ),
+              cv::Point( bin_w*(i), hist_h - cvRound(g_hist.at<float>(i)) ),
+              cv::Scalar( 0, 255, 0), 2, 8, 0  );
+        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(r_hist.at<float>(i-1)) ),
+              cv::Point( bin_w*(i), hist_h - cvRound(r_hist.at<float>(i)) ),
+              cv::Scalar( 0, 0, 255), 2, 8, 0  );
+    }
+    cv::imshow(window, src );
+    char* name_comb;
+    name_comb = static_cast<char*>(malloc(strlen(window)+1+10)); 
+    strcpy(name_comb, window); 
+    strcat(name_comb, " Histogram");
+    cv::imshow(name_comb, histImage );
+    cv::waitKey(0);
+    cv::destroyAllWindows();
+    free(name_comb);
 }
 
 void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, const float ming, const float minb)
@@ -484,8 +550,9 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     
     cv::merge(channels, outImage) ;
     if(verbose) std::cout << std::endl;
+}
 
+    //auto start = std::chrono::steady_clock::now();  
     //auto end = std::chrono::steady_clock::now();
     //auto diff = end - start;
     //std::cout << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
-}

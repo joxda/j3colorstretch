@@ -128,6 +128,8 @@ int writeTif(const char* ofile, cv::Mat output)
     return 0;
 }
 
+
+
 int writeJpg(const char* ofile, cv::Mat output)
 {
     cv::Mat out;
@@ -192,7 +194,8 @@ int main(int argc, char** argv)
                       "{v verbose   |        | print some progress information }"
                       "{minr   |        | set minimum r }"
                       "{ming   |        | set minimum g }"
-                      "{minb   |        | set minimum b }";
+                      "{minb   |        | set minimum b }"
+                      "{bp blackpoint   |     0   | set blackpoint (in units..) }";
                       
     cv::ocl::setUseOpenCL(true);
 
@@ -240,6 +243,8 @@ int main(int argc, char** argv)
     cv::UMat output_norm;
     cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD factor
 
+    if(!clp.has("x"))    showHist(output_norm,"Input Image");
+
     if (clp.has("tc"))
     {
         if(verbose) std::cout << "    Applying tonecurve" << std::endl;
@@ -253,6 +258,8 @@ int main(int argc, char** argv)
         colref = output_norm.clone();
     }
 
+    if(!clp.has("x"))    showHist(output_norm,"Skysub");
+
     float rootpower = clp.get<float>("rp");
     float rootpower2 = rootpower;
     if(clp.has("rp2")) {
@@ -263,9 +270,13 @@ int main(int argc, char** argv)
         rtpwr = i != 1 ? rootpower : rootpower2;
         if(verbose) std::cout << "    Image stretching iteration " << i+1 << std::endl;
         stretching(output_norm, output_norm, rootpower);
+        if(!clp.has("x"))    showHist(output_norm,"Stretched");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skysub");
     }
+
     
+   
     float spwr, soff;
     float scurvepower1 = clp.get<float>("sc");
     float scurvepower2 = clp.get<float>("sc2");
@@ -277,7 +288,9 @@ int main(int argc, char** argv)
         spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
         soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
         scurve(output_norm, output_norm, spwr, soff);
+        if(!clp.has("x"))    showHist(output_norm,"S-curve");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skysub");
     }
  
     if(clp.has("minr") || clp.has("minb") || clp.has("ming")) {
@@ -285,16 +298,25 @@ int main(int argc, char** argv)
         const float ming = clp.get<float>("ming") / 65535.;
         const float minb = clp.get<float>("minb") / 65535.;
         setMin(output_norm, output_norm, minr, ming, minb);
+        if(!clp.has("x"))    showHist(output_norm,"Set min");
     }
 
+    
     float colorcorrectionfactor = clp.get<float>("ccf");
 
     if (!clp.has("ncc") && output_norm.channels()==3)
     {
         colorcorr(output_norm, colref, output_norm,  skyLR, skyLG, skyLB, colorcorrectionfactor, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Color corrected");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
+        if(!clp.has("x"))    showHist(output_norm,"Skubsub");
     }
 
+    // TBD include option....
+    if(clp.get<float>("bp")>0) {
+        setBlackPoint(output_norm, output_norm, clp.get<float>("bp")*4096/65535.);
+        if(!clp.has("x"))    showHist(output_norm,"Set blackpoint");
+    }
     if(verbose) std::cout << "  Writing " << outf.c_str() << std::endl;
 
 	if (ext == "jpg" || ext == "jpeg") 

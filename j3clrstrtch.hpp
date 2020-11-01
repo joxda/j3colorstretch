@@ -33,6 +33,8 @@
 
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur);
 
+void showHist(cv::InputArray im, const char* window);
+
 inline int skyDN(
     cv::InputArray hist, const float skylevelfactor, float& skylevel);
 
@@ -46,6 +48,8 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     const float skylevelfactor, const float skyLR = 4096.0,
     const float skyLG = 4096.0,
     const float skyLB = 4096.0, const bool out=false);
+
+void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp);
 
 void stretching(
     cv::InputArray inImage, cv::OutputArray outImage, const double rootpower);
