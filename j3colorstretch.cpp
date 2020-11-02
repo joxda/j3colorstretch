@@ -296,7 +296,7 @@ int main(int argc, char** argv)
     if(clp.has("minr") || clp.has("minb") || clp.has("ming") || clp.has("min")) {
         float minr = 0;
         float ming = 0;
-        float ming = 0;
+        float minb = 0;
         
         if(clp.has("min")){
             minr = clp.get<float>("min") / 65535.;
