@@ -30,7 +30,6 @@
 
 #include "j3clrstrtch.hpp"
 
-
 inline std::string trim(const std::string& s)
 {
     auto wsfront = std::find_if_not(s.begin(), s.end(), ::isspace);
@@ -190,12 +189,13 @@ int main(int argc, char** argv)
                       "{so2 scurveoffset2| 0.22   | scurve offset even iterations}"  
                       "{ccf color      | 1.0    | default enhancement value }" // PUT TOGETHER WITH COLOR FACTOR OF 1.2!!
                       "{ncc nocolorcorrect |     | turn off color correction }"
+                      "{min    |        | set minimum in all channels (in 16bit)}"
+                      "{minr   |        | set minimum r (in 16bit)}"
+                      "{ming   |        | set minimum g (in 16bit)}"
+                      "{minb   |        | set minimum b (in 16bit)}"
                       "{x no-display    |        | no display}"
-                      "{v verbose   |        | print some progress information }"
-                      "{minr   |        | set minimum r }"
-                      "{ming   |        | set minimum g }"
-                      "{minb   |        | set minimum b }"
-                      "{bp blackpoint   |     0   | set blackpoint (in units..) }";
+                      "{v verbose   |        | print some progress information }";
+//                      "{bp blackpoint   |     0   | set blackpoint (in units..) }";
                       
     cv::ocl::setUseOpenCL(true);
 
@@ -293,11 +293,28 @@ int main(int argc, char** argv)
         if(!clp.has("x"))    showHist(output_norm,"Skysub");
     }
  
-    if(clp.has("minr") || clp.has("minb") || clp.has("ming")) {
-        const float minr = clp.get<float>("minr") / 65535.;
-        const float ming = clp.get<float>("ming") / 65535.;
-        const float minb = clp.get<float>("minb") / 65535.;
+    if(clp.has("minr") || clp.has("minb") || clp.has("ming") || clp.has("min")) {
+        float minr = 0;
+        float ming = 0;
+        float ming = 0;
+        
+        if(clp.has("min")){
+            minr = clp.get<float>("min") / 65535.;
+            ming = clp.get<float>("min") / 65535.;
+            minb = clp.get<float>("min") / 65535.;
+        }
+        if(clp.has("minr")){
+            minr = clp.get<float>("minr") / 65535.;
+        }
+        if(clp.has("ming")){
+            ming = clp.get<float>("ming") / 65535.;
+        }        
+        if(clp.has("minb")){
+            minb = clp.get<float>("minb") / 65535.;
+        }        
+        
         setMin(output_norm, output_norm, minr, ming, minb);
+        
         if(!clp.has("x"))    showHist(output_norm,"Set min");
     }
 
@@ -313,10 +330,10 @@ int main(int argc, char** argv)
     }
 
     // TBD include option....
-    if(clp.get<float>("bp")>0) {
-        setBlackPoint(output_norm, output_norm, clp.get<float>("bp")*4096/65535.);
-        if(!clp.has("x"))    showHist(output_norm,"Set blackpoint");
-    }
+    //if(clp.get<float>("bp")>0) {
+    //    setBlackPoint(output_norm, output_norm, clp.get<float>("bp")*4096/65535.);
+    //    if(!clp.has("x"))    showHist(output_norm,"Set blackpoint");
+    //}
     if(verbose) std::cout << "  Writing " << outf.c_str() << std::endl;
 
 	if (ext == "jpg" || ext == "jpeg") 
