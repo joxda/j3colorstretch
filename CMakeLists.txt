@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
 
-if($ENV(CI))
+if(DEFINED $ENV{CI})
   set(BUILD_SHARED_LIBS=OFF)
 endif()
 

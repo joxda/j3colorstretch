@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
+# TRY pip install numpy | pip3 install numpy
 #      - name: Cache Opencv
 #        id: cache-opencv
 #        uses: actions/cache@v2
