@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+#      - name: Cache Opencv
+#        id: cache-opencv
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            $HOME/lib
+#            $HOME/include
+#            $HOME/shared
+#            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
+#          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
+
+      - name: Get opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        uses: actions/checkout@v2
+        with:
+          repository: opencv/opencv
+          path: opencv
+          token: ${{ github.token }}
+          ref: ${{secrets.OPENCV_VERSION}}
+
+      # (eigen?), matrix build, checkout CMakeList.txt in .../static
+      - name: Build opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        run: |
+          cd opencv
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWITH_OPENJPEG=OFF -DWITH_OPENEXR=OFF -DWITH_EIGEN=OFF -DBUILD_LIST=core,highgui -DOPENCV_GENERATE_PKGCONFIG=ON -DWITH_WEBP=OFF -DWITH_JASPER=OFF -DWITH_V4L=OFF -DWITH_GSTREAMER=OFF -DWITH_MSMF=OFF -DWITH_AVFOUNDATION=OFF -DWITH_DSHOW=OFF -DWITH_WITH_1394=OFF -DVIDEOIO_ENABLE_PLUGINS=OFF -DOPENCV_DNN_OPENCL=OFF -DBUILD_JAVA=OFF -DOPENCV_GENERATE_PKGCONFIG=ON  -DWITH_FFMPEG=OFF ..
+          make
+          sudo make install
+
+      - name: j3colorstretch
+      	run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+
+      - name: archive results
+        uses: actions/upload-artifact@v1
+        with:
+          name: packages
+          path: build/j3colorstretch

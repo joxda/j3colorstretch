@@ -15,6 +15,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
 
+if($ENV(CI))
+  set(BUILD_SHARED_LIBS=OFF)
+endif()
+
 add_executable( j3colorstretch j3colorstretch.cpp j3clrstrtch.cpp )
 set_property(TARGET j3colorstretch PROPERTY CXX_STANDARD 11)
 
