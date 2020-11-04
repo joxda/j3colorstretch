@@ -322,6 +322,7 @@ void showHist(cv::InputArray im, const char* window) {
     cv::imshow(window, src );
     char* name_comb;
     name_comb = static_cast<char*>(malloc(strlen(window)+1+10)); 
+    std::cout << "    Hit a key to continue (with the image window being active )..." << std::endl;
     strcpy(name_comb, window); 
     strcat(name_comb, " Histogram");
     cv::imshow(name_comb, histImage );
