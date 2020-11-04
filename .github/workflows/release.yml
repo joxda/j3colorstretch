@@ -61,4 +61,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: j3colorstretch-${{ matrix.os }}.tar.gz
-          path: build/j3colorstretch*tar.gz
+          path: build/j3colorstretch-1.1.0-${{ runner.os }}.tar.gz
