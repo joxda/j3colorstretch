@@ -28,6 +28,9 @@ jobs:
 #            $HOME/shared
 #            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
 #          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
+      - name: gtk
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libgtk2.0-dev
 
       - name: Get opencv
 #        if: steps.cache-opencv.outputs.cache-hit != 'true'
