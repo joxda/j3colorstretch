@@ -55,6 +55,7 @@ jobs:
           cd build
           cmake ..
           make
+          make package
 
       - name: archive results
         uses: actions/upload-artifact@v1
