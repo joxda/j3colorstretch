@@ -301,9 +301,9 @@ void showHist(cv::InputArray im, const char* window) {
     calcHist( &bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
     calcHist( &bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
     calcHist( &bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
-    int hist_w = 2048, hist_h = 400;
+    int hist_w = src.cols, hist_h = 400;
     int bin_w = cvRound( (double) hist_w/ (double) histSize );
-    cv::Mat histImage( hist_h, hist_w, CV_8UC3, cv::Scalar( 0,0,0) );
+    cv::Mat histImage( hist_h, hist_w, CV_32FC3, cv::Scalar( 0,0,0) );
     cv::normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
@@ -311,24 +311,28 @@ void showHist(cv::InputArray im, const char* window) {
     {
         line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(b_hist.at<float>(i-1)) ),
               cv::Point( bin_w*(i), hist_h - cvRound(b_hist.at<float>(i)) ),
-              cv::Scalar( 255, 0, 0), 2, 8, 0  );
+              cv::Scalar( 1, 0, 0), 2, 8, 0  );
         line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(g_hist.at<float>(i-1)) ),
               cv::Point( bin_w*(i), hist_h - cvRound(g_hist.at<float>(i)) ),
-              cv::Scalar( 0, 255, 0), 2, 8, 0  );
+              cv::Scalar( 0, 1, 0), 2, 8, 0  );
         line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(r_hist.at<float>(i-1)) ),
               cv::Point( bin_w*(i), hist_h - cvRound(r_hist.at<float>(i)) ),
-              cv::Scalar( 0, 0, 255), 2, 8, 0  );
+              cv::Scalar( 0, 0, 1), 2, 8, 0  );
     }
-    cv::imshow(window, src );
-    char* name_comb;
+    cv::Mat dst;
+    cv::vconcat(im,histImage, dst);
+    cv::namedWindow( window,cv::WINDOW_AUTOSIZE);
+    cv::imshow(window, dst );
+  /*  char* name_comb;
     name_comb = static_cast<char*>(malloc(strlen(window)+1+10)); 
-    std::cout << "    Hit a key to continue (with the image window being active )..." << std::endl;
+    
     strcpy(name_comb, window); 
     strcat(name_comb, " Histogram");
-    cv::imshow(name_comb, histImage );
+    cv::imshow(name_comb, histImage );*/
+    std::cout << "    Hit a key to continue (with the image window being active)..." << std::endl;
     cv::waitKey(0);
     cv::destroyAllWindows();
-    free(name_comb);
+   // free(name_comb);
 }
 
 void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, const float ming, const float minb)
