@@ -62,11 +62,11 @@ jobs:
 
       - name: unpack
         if: matrix.os =='macos-latest'
-        run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
+        run: tar xzvf j3colorstretch/build/j3colorstretch-1.1.0-Darwin.tar.gz
 
       - name: unpack
         if: matrix.os !='macos-latest'
-        run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
+        run: tar xzvf j3colorstretch/build/j3colorstretch-1.1.0-Darwin.tar.gz
 
       - name: archive results
         if: matrix.os =='macos-latest'
