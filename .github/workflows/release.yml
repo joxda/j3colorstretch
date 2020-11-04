@@ -68,7 +68,7 @@ jobs:
         if: matrix.os !='macos-latest'
         run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
 
-        - name: archive results
+      - name: archive results
         if: matrix.os =='macos-latest'
         uses: actions/upload-artifact@v1
         with:
