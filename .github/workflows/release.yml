@@ -58,7 +58,16 @@ jobs:
           make package
 
       - name: archive results
+        if: matrix.os =='macos-latest'
         uses: actions/upload-artifact@v1
         with:
-          name: j3colorstretch-${{ matrix.os }}.tar.gz
+          name: j3colorstretch-1.1.0-${{ matrix.os }}.tar.gz
+          path: build/j3colorstretch-1.1.0-Darwin.tar.gz
+
+      - name: archive results
+        if: matrix.os !='macos-latest'
+        uses: actions/upload-artifact@v1
+        with:
+          name: j3colorstretch-1.1.0-${{ matrix.os }}.tar.gz
           path: build/j3colorstretch-1.1.0-${{ runner.os }}.tar.gz
+
