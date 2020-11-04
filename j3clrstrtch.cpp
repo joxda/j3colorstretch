@@ -75,6 +75,54 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
 //    to run through the for loop once?
 //    or to use parallel_for_?
 
+/*class ParallelColCorr : public cv::ParallelLoopBody
+{
+    public:
+    ParallelColCorr ( cv::Mat &rbg, cv::Mat &gbg,cv::Mat &bbg, const int rowsplit, const float mr,  const float mg, const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb), zx(zfac)
+    {
+    } 
+
+    virtual void operator ()(const cv::Range& range) const CV_OVERRIDE
+    {
+        for (int n = range.start; n < range.end; n++)
+        {
+            int start = n * row_split;
+            int stop = start + row_split;
+            stop = stop < r_bg.rows ? stop : r_bg.rows;
+
+            for (int row = start; row < stop; row++) 
+            {
+                float* r = r_bg.ptr<float>(row);
+                float* g = g_bg.ptr<float>(row);
+                float* b = b_bg.ptr<float>(row);
+
+
+
+                for (int col = 0; col < r_bg.cols; col++)
+                {
+                    if ( *r < minr ) minr * zx * *r;
+                    if ( *g < minr ) ming * zx * *g;
+                    if ( *b < minr ) minb * zx * *b;
+
+                    r++;
+                    g++;
+                    b++;
+                }
+
+            }       
+        }
+    }
+
+    ParallelColCorr& operator=(const ParallelColCorr &){
+        return *this;
+    };
+private:
+    cv::Mat &r_bg, &g_bg, &b_bg;
+    int row_split;
+    float minr, ming, minb, zx;
+};*/
+        
+
 inline int skyDN(
     cv::InputArray inHist, const float skylevelfactor, float& skylevel)
 {
@@ -351,6 +399,9 @@ void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, 
 
     const int split = 7;
     const int row_split = r_bg.rows/split;
+
+    //ParallelColCorr parallelColCorr(r_bg,g_bg,b_bg,row_split,minr,ming,minb,zx);
+    //parallel_for_(cv::Range(0, split+1), parallelColCorr,8);
 
     parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
         for (int n = range.start; n < range.end; n++)
