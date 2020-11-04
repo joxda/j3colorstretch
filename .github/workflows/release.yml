@@ -62,23 +62,26 @@ jobs:
 
       - name: unpack
         if: matrix.os =='macos-latest'
-        run: tar xzvf /Users/runner/work/j3colorstretch/j3colorstretch/build/j3colorstretch-1.1.0-Darwin.tar.gz
+        run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
 
       - name: unpack
         if: matrix.os !='macos-latest'
-        run: tar xzvf /home/runner/work/j3colorstretch/j3colorstretch/build/j3colorstretch-1.1.0-Linux.tar.gz
+        run: tar xzvf build/j3colorstretch-1.1.0-Linux.tar.gz
+
+      - name: list
+        run: find . -name j3colorstretch-1.1.0
 
       - name: archive results
         if: matrix.os =='macos-latest'
         uses: actions/upload-artifact@v1
         with:
-          name: j3colorstretch-1.1.0-${{ matrix.os }}.tar.gz
-          path: build/j3colorstretch-1.1.0-${{ runner.os }}
+          name: j3colorstretch-1.1.0-${{ matrix.os }}
+          path: j3colorstretch-1.1.0-Darwin
 
       - name: archive results
         if: matrix.os !='macos-latest'
         uses: actions/upload-artifact@v1
         with:
-          name: j3colorstretch-1.1.0-${{ matrix.os }}.tar.gz
-          path: build/j3colorstretch-1.1.0-${{ runner.os }}
+          name: j3colorstretch-1.1.0-${{ matrix.os }}
+          path: j3colorstretch-1.1.0-${{ runner.os }}
 
