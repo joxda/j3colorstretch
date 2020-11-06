@@ -59,7 +59,8 @@ jobs:
           cmake ..
           make
           make package
-      - name runnos
+          
+      - name: runnos
         run: echo ${{runner.os}}
 
       - name: unpack
