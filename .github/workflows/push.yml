@@ -28,6 +28,8 @@ jobs:
 #            $HOME/shared
 #            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
 #          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
+      - run: find . -iname CHANGES.txt
+      
       - name: gtk
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
@@ -59,7 +61,7 @@ jobs:
           cmake ..
           make
           make package
-          
+
       - name: runnos
         run: echo ${{runner.os}}
 
