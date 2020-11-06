@@ -1,0 +1,4 @@
+- Improvements for the color correction
+- Speed up of several functions
+- Illustrate each step with the resulting image and histogram
+- Implemented setMin function
