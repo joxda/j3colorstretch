@@ -16,7 +16,7 @@ There are minor changes and updates to the algorithms, but the major difference 
 # How to obtain
 
 You can try the binaries provided [here](https://github.com/joxda/j3colorstretch/releases/)
-These were compiled and statically linked to the OpenCV libraries on Ubuntu 18.04 and macOS Catalina so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`tar xzvf j3colorstretch*tgz`) and move the batch script and j3colorstretch binary to your PATH. Alternatively you can download the source code from here and follow the instructions for compiling and installing below.
+These were compiled on several Ubuntu Desktop and macOS systems and statically linked to the OpenCV libraries, so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`tar xzvf j3colorstretch*tgz`) and move the batch script and j3colorstretch binary to your PATH. Alternatively you can download the source code from here and follow the instructions for compiling and installing below.
 
 # Requirements for compilation
 

@@ -82,7 +82,7 @@ jobs:
         if: runner.os != 'Linux' 
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Darwin.tar.gz
-          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin 
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin LICENSE README.md
           ls
           pwd
 
@@ -90,7 +90,7 @@ jobs:
         if: runner.os =='Linux' 
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Linux.tar.gz      
-          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux 
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux LICENSE README.md
 
       - name: Upload Release Asset
         if: runner.os =='Linux' 
