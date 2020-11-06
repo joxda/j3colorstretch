@@ -10,7 +10,7 @@ jobs:
   announce:
     name: now
     steps:
-      - run echo 'now'
+      - run: echo 'now'
 
   release_assets:
     name: Upload asses
