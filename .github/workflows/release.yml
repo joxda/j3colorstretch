@@ -1,5 +1,8 @@
 name:  create release
 
+variables:
+- name: version
+  value: 1.1.0
 on:
   push:
     # Sequence of patterns matched against refs/tags
@@ -32,7 +35,7 @@ jobs:
 
   release_assets:
     name: Upload asses
-    needs: create_release
+    dependsOn: create_release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -78,14 +81,14 @@ jobs:
       - name: unpack
         if: runner.os != 'Linux' 
         run: |
-          tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
-          zip -r j3colorstretch-1.1.0-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin 
+          tar xzvf build/j3colorstretch-${{ variables.version }}-Darwin.tar.gz
+          zip -r j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin 
 
       - name: unpack
         if: runner.os =='Linux' 
         run: |
-          tar xzvf build/j3colorstretch-1.1.0-Linux.tar.gz      
-          zip -r j3colorstretch-1.1.0-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux 
+          tar xzvf build/j3colorstretch-${{ variables.version }}-Linux.tar.gz      
+          zip -r j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux 
 
       - name: Upload Release Asset
         id: upload-release-asset 
@@ -93,7 +96,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./j3colorstretch-1.1.0-${{ matrix.os }}.zip
-          asset_name: j3colorstretch-1.1.0-${{ matrix.os }}.zip
+          upload_url: ${{ dependencies.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip
+          asset_name: j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip
           asset_content_type: application/zip
