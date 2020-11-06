@@ -26,6 +26,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body_path: j3colorstretch/j3colorstretch/CHANGES.txt
+          body_path: /home/runner/work/j3colorstretch/j3colorstretch/CHANGES.txt
           draft: true
           prerelease: false
