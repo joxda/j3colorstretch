@@ -59,24 +59,26 @@ jobs:
           cmake ..
           make
           make package
+      - name runnos
+        run: echo ${{runner.os}}
 
       - name: unpack
-        if: runner.os =='Darwin'
+        if: runner.os !='Linux'
         run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
 
       - name: unpack
-        if: runner.os !='Darwin' 
+        if: runner.os =='Linux' 
         run: tar xzvf build/j3colorstretch-1.1.0-Linux.tar.gz
 
       - name: archive results
-        if: runner.os =='Darwin' 
+        if: runner.os !='Linux' 
         uses: actions/upload-artifact@v1
         with:
           name: j3colorstretch-1.1.0-${{ matrix.os }}
           path: j3colorstretch-1.1.0-Darwin
 
       - name: archive results
-        if:  runner.os !='Darwin' 
+        if:  runner.os =='Linux' 
         uses: actions/upload-artifact@v1
         with:
           name: j3colorstretch-1.1.0-${{ matrix.os }}
