@@ -1,8 +1,6 @@
 name:  create release
 
-variables:
-- name: version
-  value: 1.1.0
+
 on:
   push:
     # Sequence of patterns matched against refs/tags
@@ -34,6 +32,9 @@ jobs:
           prerelease: false
 
   release_assets:
+    variables:
+      - name: version
+        value: 1.1.0
     name: Upload asses
     dependsOn: create_release
     runs-on: ${{ matrix.os }}
