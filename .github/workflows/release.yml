@@ -7,6 +7,8 @@ on:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
+env:
+  version: 1.1.0
 
 jobs:
   create_release:
@@ -32,9 +34,6 @@ jobs:
           prerelease: false
 
   release_assets:
-    variables:
-      - name: version
-        value: 1.1.0
     name: Upload asses
     dependsOn: create_release
     runs-on: ${{ matrix.os }}
@@ -82,14 +81,14 @@ jobs:
       - name: unpack
         if: runner.os != 'Linux' 
         run: |
-          tar xzvf build/j3colorstretch-${{ variables.version }}-Darwin.tar.gz
-          zip -r j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin 
+          tar xzvf build/j3colorstretch-${{ env.version }}-Darwin.tar.gz
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin 
 
       - name: unpack
         if: runner.os =='Linux' 
         run: |
-          tar xzvf build/j3colorstretch-${{ variables.version }}-Linux.tar.gz      
-          zip -r j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux 
+          tar xzvf build/j3colorstretch-${{ env.version }}-Linux.tar.gz      
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux 
 
       - name: Upload Release Asset
         id: upload-release-asset 
@@ -98,6 +97,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ dependencies.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip
-          asset_name: j3colorstretch-${{ variables.version }}-${{ matrix.os }}.zip
+          asset_path: ./j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
+          asset_name: j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
           asset_content_type: application/zip
