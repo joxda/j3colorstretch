@@ -53,13 +53,13 @@ jobs:
           make package
 
       - name: unpack
-        if: matrix.os == 'macos-latest' or matrix.os == 'macos-11.0'
+        if: runner.os == 'Darwin' 
         run: |
           tar xzvf build/j3colorstretch-${{ github.ref }}-Darwin.tar.gz
           zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Darwin 
 
       - name: unpack
-        if: matrix.os !='macos-latest' and matrix.os !='macos-11.0'
+        if: runner.os !='Darwin' 
         run: |
           tar xzvf build/j3colorstretch-${{ github.ref }}-Linux.tar.gz      
           zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Linux 
