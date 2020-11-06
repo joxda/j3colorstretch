@@ -47,6 +47,7 @@ ChannelValue = ( ChannelValue / 255 ) *
 #include <iostream>
 #include "opencv2/highgui.hpp"
 //#include <chrono>
+#include <opencv2/core/cvdef.h>
 
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 {
@@ -75,14 +76,106 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
 //    to run through the for loop once?
 //    or to use parallel_for_?
 
-/*class ParallelColCorr : public cv::ParallelLoopBody
+
+class ParallelColorCorr : public cv::ParallelLoopBody
+{
+public:
+  ParallelColorCorr (cv::Mat &r_bg, cv::Mat &g_bg, cv::Mat &b_bg,cv::Mat &r_bg_ref, cv::Mat &g_bg_ref, cv::Mat &b_bg_ref, cv::Mat &cfe, const float zeroskyred, const float zeroskygreen, const float zeroskyblue, const float ref_limit, const int row_split) : r_bg(r_bg), g_bg(g_bg), b_bg(b_bg), r_bg_ref(r_bg_ref), g_bg_ref(g_bg_ref), b_bg_ref(b_bg_ref), cfe(cfe), zeroskyred(zeroskyred), zeroskygreen(zeroskygreen), zeroskyblue(zeroskyblue), ref_limit(ref_limit), row_split(row_split)
+  {}
+  virtual void operator ()(const cv::Range& range) const override
+  {
+        for (int n = range.start; n < range.end; n++)
+        {
+            int start = n * row_split;
+            int stop = start + row_split;
+            stop = stop < r_bg.rows ? stop : r_bg.rows;
+
+            for (int row = start; row < stop; row++) 
+            {
+                float* r = r_bg.ptr<float>(row);
+                float* g = g_bg.ptr<float>(row);
+                float* b = b_bg.ptr<float>(row);
+
+                float* r_ref = r_bg_ref.ptr<float>(row);
+                float* g_ref = g_bg_ref.ptr<float>(row);
+                float* b_ref = b_bg_ref.ptr<float>(row);
+
+                float* cfef = cfe.ptr<float>(row);
+
+                for (int col = 0; col < r_bg.cols; col++)
+                {
+                    *r_ref -= zeroskyred;
+                    *g_ref -= zeroskygreen;
+                    *b_ref -= zeroskyblue;
+            
+                    *r_ref = *r_ref < ref_limit ? ref_limit : *r_ref;
+                    *g_ref = *g_ref < ref_limit ? ref_limit : *g_ref;
+                    *b_ref = *b_ref < ref_limit ? ref_limit : *b_ref;
+
+                    if (*r >= *g && *r >= *b)
+                    {           
+                        float grratio = *g_ref / *r_ref / *g * *r;
+                        float brratio = *b_ref / *r_ref / *b * *r;
+
+                        grratio = grratio > 1.0 ? 1.0 : (grratio < 0.2 ? 0.2 : grratio);
+                        brratio = brratio > 1.0 ? 1.0 : (brratio < 0.2 ? 0.2 : brratio);
+
+                        *g = *g * ( (grratio - 1.) * *cfef  + 1.) ;
+                        *b = *b * ( (brratio - 1.) * *cfef  + 1.) ;
+                    }
+                    else if (*g > *r && *g >= *b)
+                    {
+                        float rgratio = *r_ref / *g_ref / *r * *g;
+                        float bgratio = *b_ref / *g_ref / *b * *g;
+
+                        rgratio = rgratio > 1.0 ? 1.0 : (rgratio < 0.2 ? 0.2 : rgratio);
+                        bgratio = bgratio > 1.0 ? 1.0 : (bgratio < 0.2 ? 0.2 : bgratio);
+
+                        *r = *r * ( (rgratio - 1.) * *cfef  + 1.) ;
+                        *b = *b * ( (bgratio - 1.) * *cfef  + 1.) ;
+                    }
+                    //if (b > g && b > r)
+                    else 
+                    {
+                        float rbratio = *r_ref / *b_ref / *r * *b;
+                        float gbratio = *g_ref / *b_ref / *g * *b;
+
+                        rbratio = rbratio > 1.0 ? 1.0 : (rbratio < 0.2 ? 0.2 : rbratio);
+                        gbratio = gbratio > 1.0 ? 1.0 : (gbratio < 0.2 ? 0.2 : gbratio);
+
+                        *r = *r * ( (rbratio - 1.) * *cfef  + 1.) ;
+                        *g = *b * ( (gbratio - 1.) * *cfef  + 1.) ;
+                    }
+
+                    r++;
+                    g++;
+                    b++;
+                    r_ref++;
+                    g_ref++;
+                    b_ref++;
+                    cfef++;
+                }
+
+            }       
+        }
+  }
+  ParallelColorCorr& operator=(const ParallelColorCorr &) {
+    return *this;
+  };
+private:
+  cv::Mat &r_bg, &g_bg, &b_bg, &r_bg_ref, &g_bg_ref, &b_bg_ref, &cfe;
+  float zeroskyred, zeroskygreen, zeroskyblue, ref_limit;
+  int row_split;
+};
+
+class ParallelSetMin : public cv::ParallelLoopBody
 {
     public:
-    ParallelColCorr ( cv::Mat &rbg, cv::Mat &gbg,cv::Mat &bbg, const int rowsplit, const float mr,  const float mg, const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb), zx(zfac)
+    ParallelSetMin ( cv::Mat &rbg, cv::Mat &gbg,cv::Mat &bbg, const int rowsplit, const float mr,  const float mg, const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb), zx(zfac)
     {
     } 
 
-    virtual void operator ()(const cv::Range& range) const CV_OVERRIDE
+  virtual void operator ()(const cv::Range& range) const override
     {
         for (int n = range.start; n < range.end; n++)
         {
@@ -113,14 +206,14 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
         }
     }
 
-    ParallelColCorr& operator=(const ParallelColCorr &){
+    ParallelSetMin& operator=(const ParallelSetMin &){
         return *this;
     };
 private:
     cv::Mat &r_bg, &g_bg, &b_bg;
     int row_split;
     float minr, ming, minb, zx;
-};*/
+};
         
 
 inline int skyDN(
@@ -250,15 +343,15 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
 
         chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
         
-        parallel_for_(cv::Range(0, 2), [&](const cv::Range& range){
-        for (int n = range.start; n < range.end; n++)
-        {   
-            if(n==1) {
+        //parallel_for_(cv::Range(0, 2), [&](const cv::Range& range){
+        //for (int n = range.start; n < range.end; n++)
+        //{   
+        //    if(n==1) {
                 chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
-            } else {
+		//    } else {
                 chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
-            }
-        }},2);
+		//}
+		//}},2.);
 	    if (  i>1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400)) {
             std::cout << "    WARNING: histogram sky level not found" << std::endl;
             std::cout << "    Try increasing the -zerosky values" << std::endl;
@@ -400,10 +493,10 @@ void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, 
     const int split = 7;
     const int row_split = r_bg.rows/split;
 
-    //ParallelColCorr parallelColCorr(r_bg,g_bg,b_bg,row_split,minr,ming,minb,zx);
-    //parallel_for_(cv::Range(0, split+1), parallelColCorr,8);
+    ParallelSetMin parallelSetMin(r_bg,g_bg,b_bg,row_split,minr,ming,minb,zx);
+    parallel_for_(cv::Range(0, split+1), parallelSetMin,8);
 
-    parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
+    /*parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
         for (int n = range.start; n < range.end; n++)
         {
             int start = n * row_split;
@@ -431,8 +524,8 @@ void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, 
 
             }       
         }
-    }, 8);
-
+    }, 8.);
+    */
     std::vector<cv::Mat> channels;
     channels.push_back(b_bg);
     channels.push_back(g_bg);
@@ -520,6 +613,13 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     const int split = 7;
     const int row_split = r_bg.rows/split;
 
+    cv::Mat r_bg_ref = bgr_planes_ref[2];
+    cv::Mat g_bg_ref = bgr_planes_ref[1];
+    cv::Mat b_bg_ref = bgr_planes_ref[0];
+    
+    ParallelColorCorr parallelColorCorr(r_bg, g_bg, b_bg, r_bg_ref, g_bg_ref, b_bg_ref, cfe, zeroskyred, zeroskygreen, zeroskyblue, ref_limit, row_split);
+    parallel_for_(cv::Range(0, split+1), parallelColorCorr,8);
+    /*
     parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
         for (int n = range.start; n < range.end; n++)
         {
@@ -595,8 +695,8 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
 
             }       
         }
-    }, 8);
-
+    }, 8.);
+    */
     if(verbose) std::cout << "|" << std::flush;
 
     std::vector<cv::Mat> channels;
