@@ -20,7 +20,7 @@ These were compiled and statically linked to the OpenCV libraries on Ubuntu 18.0
 
 # Requirements for compilation
 
-- OpenCV (version 3.0.0 or later -- at least for v1.0.0 version 3.0.0 is should be sufficient)
+- OpenCV (version 3.0.0 or later)
 - cmake (2.8.12 or later)
 
 For example, on a fresh installation of Ubuntu 18.04 Desktop the following installs the requirements:

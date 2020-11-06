@@ -462,7 +462,7 @@ void showHist(cv::InputArray im, const char* window) {
     }
     cv::Mat dst;
     cv::vconcat(im,histImage, dst);
-    cv::namedWindow( window,cv::WINDOW_AUTOSIZE);
+    cv::namedWindow( window,cv::WINDOW_AUTOSIZE | cv::WINDOW_NORMAL);
     cv::imshow(window, dst );
   /*  char* name_comb;
     name_comb = static_cast<char*>(malloc(strlen(window)+1+10)); 
