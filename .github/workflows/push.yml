@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-16.04,ubuntu-latest, ubuntu-20.04, macos-latest, macos-11.0]
+
+    steps:
+      - uses: actions/checkout@v2
+# TRY pip install numpy | pip3 install numpy
+#      - name: Cache Opencv
+#        id: cache-opencv
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            $HOME/lib
+#            $HOME/include
+#            $HOME/shared
+#            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
+#          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
+      - name: gtk
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
+
+      - name: Get opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        uses: actions/checkout@v2
+        with:
+          repository: opencv/opencv
+          path: opencv
+          token: ${{ github.token }}
+          ref: ${{secrets.OPENCV_VERSION}}
+
+      # (eigen?), matrix build, checkout CMakeList.txt in .../static
+      - name: Build opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        run: |
+          cd opencv
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWITH_QUIRC=OFF -DBUILD_PROTOBUF=OFF -DWITH_OPENJPEG=OFF -DWITH_OPENEXR=OFF -DWITH_EIGEN=OFF -DBUILD_LIST=core,highgui -DOPENCV_GENERATE_PKGCONFIG=ON -DWITH_WEBP=OFF -DWITH_JASPER=OFF -DWITH_V4L=OFF -DWITH_GSTREAMER=OFF -DWITH_MSMF=OFF -DWITH_AVFOUNDATION=OFF -DWITH_DSHOW=OFF -DWITH_WITH_1394=OFF -DVIDEOIO_ENABLE_PLUGINS=OFF -DOPENCV_DNN_OPENCL=OFF -DBUILD_JAVA=OFF -DOPENCV_GENERATE_PKGCONFIG=ON  -DWITH_FFMPEG=OFF ..
+          make
+          sudo make install
+
+      - name: j3colorstretch
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+          make package
+
+      - name: unpack
+        if: matrix.os =='macos-latest'
+        run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
+
+      - name: unpack
+        if: matrix.os !='macos-latest'
+        run: tar xzvf build/j3colorstretch-1.1.0-Linux.tar.gz
+
+      - name: archive results
+        if: matrix.os =='macos-latest'
+        uses: actions/upload-artifact@v1
+        with:
+          name: j3colorstretch-1.1.0-${{ matrix.os }}
+          path: j3colorstretch-1.1.0-Darwin
+
+      - name: archive results
+        if: matrix.os !='macos-latest'
+        uses: actions/upload-artifact@v1
+        with:
+          name: j3colorstretch-1.1.0-${{ matrix.os }}
+          path: j3colorstretch-1.1.0-${{ runner.os }}
+

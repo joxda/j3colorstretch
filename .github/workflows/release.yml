@@ -1,33 +1,24 @@
-name: CI
+name: Create release upload asset
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
-    
+    name: Create Release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest,ubuntu-16.04, ubuntu-20.04, macos-latest, macos-11.0]
 
     steps:
-      - uses: actions/checkout@v2
-# TRY pip install numpy | pip3 install numpy
-#      - name: Cache Opencv
-#        id: cache-opencv
-#        uses: actions/cache@v2
-#        with:
-#          path: |
-#            $HOME/lib
-#            $HOME/include
-#            $HOME/shared
-#            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
-#          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
       - name: gtk
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
@@ -61,24 +52,37 @@ jobs:
           make package
 
       - name: unpack
-        if: matrix.os =='macos-latest'
-        run: tar xzvf build/j3colorstretch-1.1.0-Darwin.tar.gz
+        if: matrix.os == 'macos-latest' or matrix.os == 'macos-11.0'
+        run: |
+          tar xzvf build/j3colorstretch-${{ github.ref }}-Darwin.tar.gz
+          zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Darwin 
 
       - name: unpack
-        if: matrix.os !='macos-latest'
-        run: tar xzvf build/j3colorstretch-1.1.0-Linux.tar.gz
-
-      - name: archive results
-        if: matrix.os =='macos-latest'
-        uses: actions/upload-artifact@v1
+        if: matrix.os !='macos-latest' and matrix.os !='macos-11.0'
+        run: |
+          tar xzvf build/j3colorstretch-${{ github.ref }}-Linux.tar.gz      
+          zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Linux 
+      
+      - name: Create Release
+        if: matrix.os == 'ubuntu-latest'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          name: j3colorstretch-1.1.0-${{ matrix.os }}
-          path: j3colorstretch-1.1.0-Darwin
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: CHANGES.txt
+          draft: true
+          prerelease: false
 
-      - name: archive results
-        if: matrix.os !='macos-latest'
-        uses: actions/upload-artifact@v1
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: j3colorstretch-1.1.0-${{ matrix.os }}
-          path: j3colorstretch-1.1.0-${{ runner.os }}
-
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./j3colorstretch-${{ github.ref }}-${{ matrix.os }}zip
+          asset_name: j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip
+          asset_content_type: application/zip
