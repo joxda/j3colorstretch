@@ -9,6 +9,7 @@ on:
 jobs:
   announce:
     name: now
+    runs-on: ubuntu-latest
     steps:
       - run: echo 'now'
 
