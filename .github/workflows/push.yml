@@ -28,7 +28,9 @@ jobs:
 #            $HOME/shared
 #            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
 #          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
-      - run: find . -iname CHANGES.txt
+      - run: |
+        find . -iname CHANGES.txt
+        pwd
       
       - name: gtk
         if: runner.os == 'Linux'
