@@ -1,0 +1,76 @@
+name:  upload asset
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  release_assets:
+    name: Upload asses
+    needs: create_release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest,ubuntu-16.04, ubuntu-20.04, macos-latest, macos-11.0]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: gtk
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
+
+      - name: Get opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        uses: actions/checkout@v2
+        with:
+          repository: opencv/opencv
+          path: opencv
+          token: ${{ github.token }}
+          ref: ${{secrets.OPENCV_VERSION}}
+
+      # (eigen?), matrix build, checkout CMakeList.txt in .../static
+      - name: Build opencv
+#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        run: |
+          cd opencv
+          mkdir -p build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWITH_QUIRC=OFF -DBUILD_PROTOBUF=OFF -DWITH_OPENJPEG=OFF -DWITH_OPENEXR=OFF -DWITH_EIGEN=OFF -DBUILD_LIST=core,highgui -DOPENCV_GENERATE_PKGCONFIG=ON -DWITH_WEBP=OFF -DWITH_JASPER=OFF -DWITH_V4L=OFF -DWITH_GSTREAMER=OFF -DWITH_MSMF=OFF -DWITH_AVFOUNDATION=OFF -DWITH_DSHOW=OFF -DWITH_WITH_1394=OFF -DVIDEOIO_ENABLE_PLUGINS=OFF -DOPENCV_DNN_OPENCL=OFF -DBUILD_JAVA=OFF -DOPENCV_GENERATE_PKGCONFIG=ON  -DWITH_FFMPEG=OFF ..
+          make
+          sudo make install
+
+      - name: j3colorstretch
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          make
+          make package
+
+      - name: unpack
+        if: matrix.os == 'macos-latest' or matrix.os == 'macos-11.0'
+        run: |
+          tar xzvf build/j3colorstretch-${{ github.ref }}-Darwin.tar.gz
+          zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Darwin 
+
+      - name: unpack
+        if: matrix.os !='macos-latest' and matrix.os !='macos-11.0'
+        run: |
+          tar xzvf build/j3colorstretch-${{ github.ref }}-Linux.tar.gz      
+          zip -r j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip j3colorstretch-${{ github.ref }}-Linux 
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./j3colorstretch-${{ github.ref }}-${{ matrix.os }}zip
+          asset_name: j3colorstretch-${{ github.ref }}-${{ matrix.os }}.zip
+          asset_content_type: application/zip
