@@ -10,7 +10,6 @@ on:
 jobs:
   create_release:
     name: Create release
-    id: create_release
     runs-on: ubuntu-latest
     # Note this. We are going to use that in further jobs.
     outputs:
