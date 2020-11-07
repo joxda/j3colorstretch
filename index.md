@@ -12,14 +12,24 @@ Running the executable without any parameters prints out the following help mess
 
 	--ccf, --color (value:1.0)
 		default enhancement value
+	-f
+		force to overwrite output file
 	-h, --help, --usage
 		print this message
+	--min
+		set minimum in all channels (in 16bit)
+	--minb
+		set minimum b (in 16bit)
+	--ming
+		set minimum g (in 16bit)
+	--minr
+		set minimum r (in 16bit)
 	--ncc, --nocolorcorrect
 		turn off color correction
 	--no-display, -x
 		no display
-	-o, --obase, --output (value:output)
-		output image
+	-o, --output
+		output image (without the result will be displayed, supports jpg and tif)
 	--ri, --rootiter (value:1)
 		number of iterations on applying rootpower - sky
 	--rootpower, --rp (value:6.0)
@@ -40,8 +50,10 @@ Running the executable without any parameters prints out the following help mess
 		sky level relative to the histogram peak
 	--tc, --tonecurve
 		application of a tone curve
+	-v, --verbose
+		print some progress information
 	--zeroskyblue (value:4096.0)
-		desired zero point on sky, blue channel
+		desired zero point on sky, bue channel
 	--zeroskygreen (value:4096.0)
 		desired zero point on sky, green channel
 	--zeroskyred (value:4096.0)
