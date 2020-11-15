@@ -57,7 +57,7 @@ struct CustomCLP2
 
             pos_args.push_back(s);
         }
-        _clp.about("\nThis program stretches astronomical images while preserving the colors.\n"); 
+        _clp.about("\nThis program stretches astronomical images while preserving the colors.\n\nThe OpenCV library is licensed under the Apache 2 license, https://github.com/opencv/opencv/blob/master/LICENSE\nSome algorthims are based on rnc-color-stretch, which is licensed under the GPL, https://clarkvision.com/articles/astrophotography.software/\nThis software is licensed under the GPLv3 and was retrieved from https://github.com/joxda/j3colorstretch\n"); 
 
     }
     

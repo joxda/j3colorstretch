@@ -65,3 +65,9 @@ formatbackup*/
 *.jpg
 
 j3colorstretch
+j3colorstretch_v*
+
+*tar.gz
+*CPack*
+
+local_TODO
