@@ -258,7 +258,7 @@ void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
     float fac = log(1.0 / 12.0);
     float b = 12.0;
 
-    cv::UMat tmpImage, tmpImage3; // TBD UMat or Mat?
+    cv::Mat tmpImage, tmpImage3; // TBD UMat or Mat?
     cv::pow(inImage, 0.4, tmpImage3);
     cv::multiply(tmpImage3, fac, tmpImage);
     cv::exp(tmpImage, tmpImage3);
@@ -312,13 +312,13 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         return; 
     }
 
-    std::vector<cv::UMat> bgr_planes(3);
+    std::vector<cv::Mat> bgr_planes(3);
 
     cv::split(inImage, bgr_planes);
 
-    cv::UMat r = bgr_planes[2];
-    cv::UMat g = bgr_planes[1];
-    cv::UMat b = bgr_planes[0];
+    cv::Mat r = bgr_planes[2];
+    cv::Mat g = bgr_planes[1];
+    cv::Mat b = bgr_planes[0];
 
     float zeroskyred = skyLR / 65535.0;
     float zeroskygreen = skyLG / 65535.0;
@@ -328,15 +328,15 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     for (int i = 1; i <= 25; i++)
     {
         if(out) std::cout << "|" << std::flush;
-        cv::UMat r_hist, g_hist, b_hist;
+        cv::Mat r_hist, g_hist, b_hist;
         hist(r, r_hist, true);
         hist(g, g_hist, true);
         hist(b, b_hist, true);
 
         cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
-        cv::UMat r_hist_cropped = r_hist(roi);
-        cv::UMat g_hist_cropped = g_hist(roi);
-        cv::UMat b_hist_cropped = b_hist(roi);
+        cv::Mat r_hist_cropped = r_hist(roi);
+        cv::Mat g_hist_cropped = g_hist(roi);
+        cv::Mat b_hist_cropped = b_hist(roi);
 
         float skylevel = -1.;
         int chistredskydn, chistgreenskydn, chistblueskydn;
@@ -380,7 +380,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     }
     if(out) std::cout << std::endl;
 
-    std::vector<cv::UMat> channels;
+    std::vector<cv::Mat> channels;
     channels.push_back(b);
     channels.push_back(g);
     channels.push_back(r);
@@ -395,7 +395,7 @@ void stretching(
 {
     double x = 1. / rootpower;
 
-    cv::UMat dim;
+    cv::Mat dim;
     if (rootpower > 30.)
     {
         cv::Mat inImage = inImageA.getMat();
@@ -403,11 +403,11 @@ void stretching(
     }
     else
     {
-        dim = inImageA.getUMat();
+        dim = inImageA.getMat();
     }
 
-    cv::add(dim, 1.0 / 65536.0, dim);
-    //cv::divide(dim, (1. + 1.0 / 65535.), dim);
+    cv::add(dim, 1.0 / 65535.0, dim);
+    cv::divide(dim, (1. + 1.0 / 65535.), dim);
     cv::pow(dim, x, dim);
 
     double immin;

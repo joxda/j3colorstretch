@@ -240,7 +240,7 @@ int main(int argc, char** argv)
     if(readImage(clp.pos_args[0].c_str(),thisIma)<0)
 		return -1;
     
-    cv::UMat output_norm;
+    cv::Mat output_norm;
     cv::normalize(thisIma, output_norm, 1., 0., cv::NORM_MINMAX); // TBD factor
 
     if(!clp.has("x"))    showHist(output_norm,"Input Image");
@@ -252,7 +252,7 @@ int main(int argc, char** argv)
     }
 
     CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
-    cv::UMat colref;
+    cv::Mat colref;
     if (!clp.has("ncc") && output_norm.channels()==3)
     {   
         colref = output_norm.clone();
@@ -338,9 +338,9 @@ int main(int argc, char** argv)
 
 	if (ext == "jpg" || ext == "jpeg") 
 	{
-		writeJpg(outf.c_str(), output_norm.getMat(cv::ACCESS_READ)); 
+		writeJpg(outf.c_str(), output_norm); 
 	} else if (ext == "tif" || ext == "tiff") {
-		writeTif(outf.c_str(), output_norm.getMat(cv::ACCESS_READ));
+		writeTif(outf.c_str(), output_norm);
 	} else {
 		cv::Mat c3;
     	output_norm.convertTo(c3, CV_8UC3, 255.);
