@@ -268,7 +268,7 @@ int main(int argc, char** argv)
     float rtpwr;
     for(int i=0; i < clp.get<int>("ri"); i++) {
         rtpwr = i != 1 ? rootpower : rootpower2;
-        if(verbose) std::cout << "    Image stretching iteration " << i+1 << std::endl;
+        if(verbose) std::cout << "    Image stretching iteration " << i+1 << " (rootpower " << rtpwr <<")" <<  std::endl;
         stretching(output_norm, output_norm, rootpower);
         if(!clp.has("x"))    showHist(output_norm,"Stretched");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);
@@ -284,9 +284,9 @@ int main(int argc, char** argv)
     float scurveoff2 = clp.get<float>("so2");
  
     for(int i=0; i < clp.get<int>("si"); i++) {
-        if(verbose) std::cout << "    S-curve iteration " << i+1 << std::endl;
         spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
         soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
+        if(verbose) std::cout << "    S-curve iteration " << i+1 << " (Power: " << spwr << " offset: " << soff << ")" << std::endl;
         scurve(output_norm, output_norm, spwr, soff);
         if(!clp.has("x"))    showHist(output_norm,"S-curve");
         CVskysub(output_norm, output_norm, skylevelfactor, skyLR, skyLG, skyLB, verbose);

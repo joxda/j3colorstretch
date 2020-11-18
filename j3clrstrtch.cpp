@@ -236,7 +236,7 @@ inline int skyDN(
     int diff = upper - lower;
     int mid;
     float* val;
-    while(diff>1) {
+    while(diff>1) { // TBD DOUBLE CHECK THIS!!
         mid = lower + diff/2;
         val = hist.ptr<float>(0, mid);
         if(*val > skylevel) {
