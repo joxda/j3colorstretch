@@ -144,7 +144,7 @@ public:
                         gbratio = gbratio > 1.0 ? 1.0 : (gbratio < 0.2 ? 0.2 : gbratio);
 
                         *r = *r * ( (rbratio - 1.) * *cfef  + 1.) ;
-                        *g = *b * ( (gbratio - 1.) * *cfef  + 1.) ;
+                        *g = *g * ( (gbratio - 1.) * *cfef  + 1.) ;
                     }
 
                     r++;
