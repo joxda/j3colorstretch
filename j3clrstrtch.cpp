@@ -62,7 +62,7 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 
     if (blur)
     {
-        cv::blur(hist, hist, cv::Size(1, 301), cv::Point(-1, -1),
+        cv::blur(hist, hist, cv::Size(1, 601), cv::Point(-1, -1),
             cv::BORDER_ISOLATED);
     }
 }
