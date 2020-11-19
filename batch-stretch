@@ -5,7 +5,7 @@
 
 if [ "$#" -le 2 ] || ! [ -d "$1" ]; then
     echo
-    echo "Usage: batch-stretch dir ext (tif or jpg) [dcraw] [j3colorstretch parameters]"
+    echo "Usage: batch-stretch dir ext ext_out(tif or jpg) [dcraw] [j3colorstretch parameters]"
     echo
     echo "  This script runs j3colorstretch with the provided optional parameters on all"
     echo "  images in the directory dir with the extension ext. The output can be either"
@@ -49,9 +49,9 @@ while read -r -d $'\0' file; do
 
   if [ "$dcraw" = true ] ; then
     dcraw -4 -T -c -r 1.961914 1.0 1.632813 1.0 "${file}" > "${temp_dir}/${filename}_j3cs.tiff"
-    j3colorstretch "${temp_dir}/${filename}_j3cs.tiff ${@}" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    j3colorstretch "${temp_dir}/${filename}_j3cs.tiff" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT}" "${@}"
   else
-    j3colorstretch "${file}" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT} ${@}"
+    j3colorstretch "${file}" -v -x --output="${DIR}/${filename}_j3cs.${EXT_OUT}" "${@}"
   fi
 done < <(find "$DIR" -maxdepth 1 \( -iname \*.${EXT} \) -print0)
 

@@ -1,11 +1,11 @@
 /*******************************************************************************
   Copyright(c) 2020 Joachim Janz. All rights reserved.
- 
-  The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be 
-  obtained from 
-  https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/  
+
+  The algorithms are based on Roger N. Clark's rnc-color-stretch, which can be
+  obtained from
+  https://clarkvision.com/articles/astrophotography.software/rnc-color-stretch/
   and which is licenced under the GPL.
-  
+
   This program is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License as published by the Free
   Software Foundation; either version 2 of the License, or (at your option)
@@ -31,7 +31,7 @@ Then, for each channel value R, G, B (0-255) for each pixel, do the following in
 
 Apply the input levels:
 
-ChannelValue = 255 * ( ( ChannelValue - ShadowValue ) / 
+ChannelValue = 255 * ( ( ChannelValue - ShadowValue ) /
     ( HighlightValue - ShadowValue ) )
 Apply the midtones:
 
@@ -58,18 +58,19 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
     bool uniform = true, accumulate = false;
     int channels[] = {0};
     cv::calcHist(&ima, 1, channels, cv::Mat(), hist, 1, histSize, histRange,
-        uniform, accumulate);
+                 uniform, accumulate);
 
     if (blur)
     {
-        cv::blur(hist, hist, cv::Size(1, 601), cv::Point(-1, -1),
-            cv::BORDER_ISOLATED);
+        int border = CV_MAJOR_VERSION > 3 ? cv::BORDER_ISOLATED : cv::BORDER_REFLECT;
+        cv::blur(hist, hist, cv::Size(1, 601), cv::Point(-1, -1), border);
     }
 }
 
-void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
+void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp)
+{
     cv::subtract(inImage, cv::Scalar::all(bp), outImage);
-    cv::divide(outImage, cv::Scalar::all(1-bp), outImage);
+    cv::divide(outImage, cv::Scalar::all(1 - bp), outImage);
 }
 // Should the split images be used troughout??!
 // would it be benefitial to use calcHist on all channels and
@@ -79,145 +80,153 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp) {
 
 class ParallelColorCorr : public cv::ParallelLoopBody
 {
-public:
-  ParallelColorCorr (cv::Mat &r_bg, cv::Mat &g_bg, cv::Mat &b_bg,cv::Mat &r_bg_ref, cv::Mat &g_bg_ref, cv::Mat &b_bg_ref, cv::Mat &cfe, const float zeroskyred, const float zeroskygreen, const float zeroskyblue, const float ref_limit, const int row_split) : r_bg(r_bg), g_bg(g_bg), b_bg(b_bg), r_bg_ref(r_bg_ref), g_bg_ref(g_bg_ref), b_bg_ref(b_bg_ref), cfe(cfe), zeroskyred(zeroskyred), zeroskygreen(zeroskygreen), zeroskyblue(zeroskyblue), ref_limit(ref_limit), row_split(row_split)
-  {}
-  virtual void operator ()(const cv::Range& range) const override
-  {
-        for (int n = range.start; n < range.end; n++)
+    public:
+        ParallelColorCorr (cv::Mat &r_bg, cv::Mat &g_bg, cv::Mat &b_bg, cv::Mat &r_bg_ref, cv::Mat &g_bg_ref, cv::Mat &b_bg_ref,
+                           cv::Mat &cfe, const float zeroskyred, const float zeroskygreen, const float zeroskyblue, const float ref_limit,
+                           const int row_split) : r_bg(r_bg), g_bg(g_bg), b_bg(b_bg), r_bg_ref(r_bg_ref), g_bg_ref(g_bg_ref), b_bg_ref(b_bg_ref),
+            cfe(cfe), zeroskyred(zeroskyred), zeroskygreen(zeroskygreen), zeroskyblue(zeroskyblue), ref_limit(ref_limit),
+            row_split(row_split)
+        {}
+        virtual void operator ()(const cv::Range &range) const override
         {
-            int start = n * row_split;
-            int stop = start + row_split;
-            stop = stop < r_bg.rows ? stop : r_bg.rows;
-
-            for (int row = start; row < stop; row++) 
+            for (int n = range.start; n < range.end; n++)
             {
-                float* r = r_bg.ptr<float>(row);
-                float* g = g_bg.ptr<float>(row);
-                float* b = b_bg.ptr<float>(row);
+                int start = n * row_split;
+                int stop = start + row_split;
+                stop = stop < r_bg.rows ? stop : r_bg.rows;
 
-                float* r_ref = r_bg_ref.ptr<float>(row);
-                float* g_ref = g_bg_ref.ptr<float>(row);
-                float* b_ref = b_bg_ref.ptr<float>(row);
-
-                float* cfef = cfe.ptr<float>(row);
-
-                for (int col = 0; col < r_bg.cols; col++)
+                for (int row = start; row < stop; row++)
                 {
-                    *r_ref -= zeroskyred;
-                    *g_ref -= zeroskygreen;
-                    *b_ref -= zeroskyblue;
-            
-                    *r_ref = *r_ref < ref_limit ? ref_limit : *r_ref;
-                    *g_ref = *g_ref < ref_limit ? ref_limit : *g_ref;
-                    *b_ref = *b_ref < ref_limit ? ref_limit : *b_ref;
+                    float* r = r_bg.ptr<float>(row);
+                    float* g = g_bg.ptr<float>(row);
+                    float* b = b_bg.ptr<float>(row);
 
-                    if (*r >= *g && *r >= *b)
-                    {           
-                        float grratio = *g_ref / *r_ref / *g * *r;
-                        float brratio = *b_ref / *r_ref / *b * *r;
+                    float* r_ref = r_bg_ref.ptr<float>(row);
+                    float* g_ref = g_bg_ref.ptr<float>(row);
+                    float* b_ref = b_bg_ref.ptr<float>(row);
 
-                        grratio = grratio > 1.0 ? 1.0 : (grratio < 0.2 ? 0.2 : grratio);
-                        brratio = brratio > 1.0 ? 1.0 : (brratio < 0.2 ? 0.2 : brratio);
+                    float* cfef = cfe.ptr<float>(row);
 
-                        *g = *g * ( (grratio - 1.) * *cfef  + 1.) ;
-                        *b = *b * ( (brratio - 1.) * *cfef  + 1.) ;
-                    }
-                    else if (*g > *r && *g >= *b)
+                    for (int col = 0; col < r_bg.cols; col++)
                     {
-                        float rgratio = *r_ref / *g_ref / *r * *g;
-                        float bgratio = *b_ref / *g_ref / *b * *g;
+                        *r_ref -= zeroskyred;
+                        *g_ref -= zeroskygreen;
+                        *b_ref -= zeroskyblue;
 
-                        rgratio = rgratio > 1.0 ? 1.0 : (rgratio < 0.2 ? 0.2 : rgratio);
-                        bgratio = bgratio > 1.0 ? 1.0 : (bgratio < 0.2 ? 0.2 : bgratio);
+                        *r_ref = *r_ref < ref_limit ? ref_limit : *r_ref;
+                        *g_ref = *g_ref < ref_limit ? ref_limit : *g_ref;
+                        *b_ref = *b_ref < ref_limit ? ref_limit : *b_ref;
 
-                        *r = *r * ( (rgratio - 1.) * *cfef  + 1.) ;
-                        *b = *b * ( (bgratio - 1.) * *cfef  + 1.) ;
+                        if (*r >= *g && *r >= *b)
+                        {
+                            float grratio = *g_ref / *r_ref / *g * *r;
+                            float brratio = *b_ref / *r_ref / *b * *r;
+
+                            grratio = grratio > 1.0 ? 1.0 : (grratio < 0.2 ? 0.2 : grratio);
+                            brratio = brratio > 1.0 ? 1.0 : (brratio < 0.2 ? 0.2 : brratio);
+
+                            *g = *g * ( (grratio - 1.) * *cfef  + 1.) ;
+                            *b = *b * ( (brratio - 1.) * *cfef  + 1.) ;
+                        }
+                        else if (*g > *r && *g >= *b)
+                        {
+                            float rgratio = *r_ref / *g_ref / *r * *g;
+                            float bgratio = *b_ref / *g_ref / *b * *g;
+
+                            rgratio = rgratio > 1.0 ? 1.0 : (rgratio < 0.2 ? 0.2 : rgratio);
+                            bgratio = bgratio > 1.0 ? 1.0 : (bgratio < 0.2 ? 0.2 : bgratio);
+
+                            *r = *r * ( (rgratio - 1.) * *cfef  + 1.) ;
+                            *b = *b * ( (bgratio - 1.) * *cfef  + 1.) ;
+                        }
+                        //if (b > g && b > r)
+                        else
+                        {
+                            float rbratio = *r_ref / *b_ref / *r * *b;
+                            float gbratio = *g_ref / *b_ref / *g * *b;
+
+                            rbratio = rbratio > 1.0 ? 1.0 : (rbratio < 0.2 ? 0.2 : rbratio);
+                            gbratio = gbratio > 1.0 ? 1.0 : (gbratio < 0.2 ? 0.2 : gbratio);
+
+                            *r = *r * ( (rbratio - 1.) * *cfef  + 1.) ;
+                            *g = *g * ( (gbratio - 1.) * *cfef  + 1.) ;
+                        }
+
+                        r++;
+                        g++;
+                        b++;
+                        r_ref++;
+                        g_ref++;
+                        b_ref++;
+                        cfef++;
                     }
-                    //if (b > g && b > r)
-                    else 
-                    {
-                        float rbratio = *r_ref / *b_ref / *r * *b;
-                        float gbratio = *g_ref / *b_ref / *g * *b;
 
-                        rbratio = rbratio > 1.0 ? 1.0 : (rbratio < 0.2 ? 0.2 : rbratio);
-                        gbratio = gbratio > 1.0 ? 1.0 : (gbratio < 0.2 ? 0.2 : gbratio);
-
-                        *r = *r * ( (rbratio - 1.) * *cfef  + 1.) ;
-                        *g = *g * ( (gbratio - 1.) * *cfef  + 1.) ;
-                    }
-
-                    r++;
-                    g++;
-                    b++;
-                    r_ref++;
-                    g_ref++;
-                    b_ref++;
-                    cfef++;
                 }
-
-            }       
+            }
         }
-  }
-  ParallelColorCorr& operator=(const ParallelColorCorr &) {
-    return *this;
-  };
-private:
-  cv::Mat &r_bg, &g_bg, &b_bg, &r_bg_ref, &g_bg_ref, &b_bg_ref, &cfe;
-  float zeroskyred, zeroskygreen, zeroskyblue, ref_limit;
-  int row_split;
+        ParallelColorCorr &operator=(const ParallelColorCorr &)
+        {
+            return *this;
+        };
+    private:
+        cv::Mat &r_bg, &g_bg, &b_bg, &r_bg_ref, &g_bg_ref, &b_bg_ref, &cfe;
+        float zeroskyred, zeroskygreen, zeroskyblue, ref_limit;
+        int row_split;
 };
 
 class ParallelSetMin : public cv::ParallelLoopBody
 {
     public:
-    ParallelSetMin ( cv::Mat &rbg, cv::Mat &gbg,cv::Mat &bbg, const int rowsplit, const float mr,  const float mg, const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb), zx(zfac)
-    {
-    } 
-
-  virtual void operator ()(const cv::Range& range) const override
-    {
-        for (int n = range.start; n < range.end; n++)
+        ParallelSetMin ( cv::Mat &rbg, cv::Mat &gbg, cv::Mat &bbg, const int rowsplit, const float mr,  const float mg,
+                         const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb),
+            zx(zfac)
         {
-            int start = n * row_split;
-            int stop = start + row_split;
-            stop = stop < r_bg.rows ? stop : r_bg.rows;
-
-            for (int row = start; row < stop; row++) 
-            {
-                float* r = r_bg.ptr<float>(row);
-                float* g = g_bg.ptr<float>(row);
-                float* b = b_bg.ptr<float>(row);
-
-
-
-                for (int col = 0; col < r_bg.cols; col++)
-                {
-                    if ( *r < minr ) minr * zx * *r;
-                    if ( *g < minr ) ming * zx * *g;
-                    if ( *b < minr ) minb * zx * *b;
-
-                    r++;
-                    g++;
-                    b++;
-                }
-
-            }       
         }
-    }
 
-    ParallelSetMin& operator=(const ParallelSetMin &){
-        return *this;
-    };
-private:
-    cv::Mat &r_bg, &g_bg, &b_bg;
-    int row_split;
-    float minr, ming, minb, zx;
+        virtual void operator ()(const cv::Range &range) const override
+        {
+            for (int n = range.start; n < range.end; n++)
+            {
+                int start = n * row_split;
+                int stop = start + row_split;
+                stop = stop < r_bg.rows ? stop : r_bg.rows;
+
+                for (int row = start; row < stop; row++)
+                {
+                    float* r = r_bg.ptr<float>(row);
+                    float* g = g_bg.ptr<float>(row);
+                    float* b = b_bg.ptr<float>(row);
+
+
+
+                    for (int col = 0; col < r_bg.cols; col++)
+                    {
+                        if ( *r < minr ) minr * zx * *r;
+                        if ( *g < minr ) ming * zx * *g;
+                        if ( *b < minr ) minb * zx * *b;
+
+                        r++;
+                        g++;
+                        b++;
+                    }
+
+                }
+            }
+        }
+
+        ParallelSetMin &operator=(const ParallelSetMin &)
+        {
+            return *this;
+        };
+    private:
+        cv::Mat &r_bg, &g_bg, &b_bg;
+        int row_split;
+        float minr, ming, minb, zx;
 };
-        
+
 
 inline int skyDN(
-    cv::InputArray inHist, const float skylevelfactor, float& skylevel)
+    cv::InputArray inHist, const float skylevelfactor, float &skylevel)
 {
     cv::Mat hist = inHist.getMat();
 
@@ -225,29 +234,24 @@ inline int skyDN(
     int chistskydn = 0;
     double histGmax;
 
-    cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc); 
-    if(skylevel < 0) {
-        skylevel = (float)histGmax * skylevelfactor;   
+    cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc);
+    if(skylevel < 0)
+    {
+        skylevel = (float)histGmax * skylevelfactor;
     }
-    const float* p = hist.ptr<float>(0, maxloc.y); 
-    
-    int lower = 2;
-    int upper = maxloc.y;
-    int diff = upper - lower;
-    int mid;
-    float* val;
-    while(diff>1) { // TBD DOUBLE CHECK THIS!!
-        mid = lower + diff/2;
-        val = hist.ptr<float>(0, mid);
-        if(*val > skylevel) {
-            upper = mid;
-        } else {
-            lower = mid;
-        }
-        diff = upper-lower;
-    }
-    chistskydn = mid;
 
+    const float* p = hist.ptr<float>(0, maxloc.y);
+    for (int ih = maxloc.y; ih >= 2; ih--)
+    {
+        float top = *p;
+        *p--;
+        float bottom = *p;
+        if (top >= skylevel && bottom <= skylevel)
+        {
+            chistskydn = ih;
+            break;
+        }
+    }
     return chistskydn;
 }
 
@@ -267,10 +271,10 @@ void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
 }
 
 void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
-    const float skylevelfactor, const float sky = 4096.0, const bool out=false) 
-{ 
+                 const float skylevelfactor, const float sky = 4096.0, const bool out = false)
+{
     float zerosky = sky / 65535.0;
-    
+
     if(out) std::cout << "  Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
     {
@@ -278,19 +282,19 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
 
         cv::Mat histh;
         hist(inImage, histh, true);
-        
-        cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
+
+        cv::Rect roi = cv::Rect(0, 400, 1, 65100);
         cv::Mat hist_cropped = histh(roi);
-        
-        float skylevel=-1.;
+
+        float skylevel = -1.;
         int chistskydn;
         chistskydn = skyDN(hist_cropped, skylevelfactor, skylevel) + 400;
-        
+
         if (pow(chistskydn - sky, 2) <= 25)
             break;
 
         float chistskysub1 = chistskydn / 65535. - zerosky;
-        
+
         float cfscale = 1.0 / (1.0 - chistskysub1);
 
         cv::subtract(inImage, chistskysub1, outImage);
@@ -303,13 +307,14 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
 
 // TBD UMat or Mat?
 void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
-    const float skylevelfactor, const float skyLR = 4096.0,
-    const float skyLG = 4096.0,
-    const float skyLB = 4096.0, const bool out=false) // TBD desired zero point in channels... ---
-{ 
-    if(inImage.channels()==1) {
+              const float skylevelfactor, const float skyLR = 4096.0,
+              const float skyLG = 4096.0,
+              const float skyLB = 4096.0, const bool out = false) // TBD desired zero point in channels... ---
+{
+    if(inImage.channels() == 1)
+    {
         CVskysub1Ch(inImage,  outImage, skylevelfactor, skyLR);
-        return; 
+        return;
     }
 
     std::vector<cv::Mat> bgr_planes(3);
@@ -323,7 +328,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     float zeroskyred = skyLR / 65535.0;
     float zeroskygreen = skyLG / 65535.0;
     float zeroskyblue = skyLB / 65535.0;
-    
+
     if(out) std::cout << "    Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
     {
@@ -333,7 +338,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         hist(g, g_hist, true);
         hist(b, b_hist, true);
 
-        cv::Rect roi = cv::Rect(0, 400, 1, 65100); 
+        cv::Rect roi = cv::Rect(0, 400, 1, 65100);
         cv::Mat r_hist_cropped = r_hist(roi);
         cv::Mat g_hist_cropped = g_hist(roi);
         cv::Mat b_hist_cropped = b_hist(roi);
@@ -342,26 +347,27 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
         chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
-        
+
         //parallel_for_(cv::Range(0, 2), [&](const cv::Range& range){
         //for (int n = range.start; n < range.end; n++)
-        //{   
+        //{
         //    if(n==1) {
-                chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
-		//    } else {
-                chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
-		//}
-		//}},2.);
-	    if (  i>1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400)) {
+        chistredskydn = skyDN(r_hist_cropped, skylevelfactor, skylevel) + 400;
+        //    } else {
+        chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
+        //}
+        //}},2.);
+        if (  i > 1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400))
+        {
             std::cout << "    WARNING: histogram sky level not found" << std::endl;
             std::cout << "    Try increasing the -zerosky values" << std::endl;
-           // break;        
+            // break;
         }
 
         if (pow(chistgreenskydn - skyLG, 2) <= 25 &&
-            pow(chistredskydn - skyLR, 2) <= 25 &&
-            pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
-            break; 
+                pow(chistredskydn - skyLR, 2) <= 25 &&
+                pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
+            break;
 
         float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
         float chistgreenskysub1 = chistgreenskydn / 65535. - zeroskygreen;
@@ -411,9 +417,9 @@ void stretching(
     cv::pow(dim, x, dim);
 
     double immin;
-    cv::minMaxLoc(dim, &immin, 0, 0, 0); 
+    cv::minMaxLoc(dim, &immin, 0, 0, 0);
 
-    immin -= 4096.0 / 65535.;               
+    immin -= 4096.0 / 65535.;
     immin = immin > 0. ? immin : 0.;
 
     cv::subtract(dim, immin, dim);
@@ -430,7 +436,8 @@ void stretching(
 }
 
 
-void showHist(cv::InputArray im, const char* window) {
+void showHist(cv::InputArray im, const char* window)
+{
     cv::Mat src = im.getMat();
     std::vector<cv::Mat> bgr_planes;
     cv::split( src, bgr_planes );
@@ -443,37 +450,30 @@ void showHist(cv::InputArray im, const char* window) {
     calcHist( &bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
     calcHist( &bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
     int hist_w = src.cols, hist_h = 400;
-    int bin_w = cvRound( (double) hist_w/ (double) histSize );
-    cv::Mat histImage( hist_h, hist_w, CV_32FC3, cv::Scalar( 0,0,0) );
+    int bin_w = cvRound( (double) hist_w / (double) histSize );
+    cv::Mat histImage( hist_h, hist_w, CV_32FC3, cv::Scalar( 0, 0, 0) );
     cv::normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     for( int i = 1; i < histSize; i++ )
     {
-        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(b_hist.at<float>(i-1)) ),
-              cv::Point( bin_w*(i), hist_h - cvRound(b_hist.at<float>(i)) ),
+        line( histImage, cv::Point( bin_w * (i - 1), hist_h - cvRound(b_hist.at<float>(i - 1)) ),
+              cv::Point( bin_w * (i), hist_h - cvRound(b_hist.at<float>(i)) ),
               cv::Scalar( 1, 0, 0), 2, 8, 0  );
-        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(g_hist.at<float>(i-1)) ),
-              cv::Point( bin_w*(i), hist_h - cvRound(g_hist.at<float>(i)) ),
+        line( histImage, cv::Point( bin_w * (i - 1), hist_h - cvRound(g_hist.at<float>(i - 1)) ),
+              cv::Point( bin_w * (i), hist_h - cvRound(g_hist.at<float>(i)) ),
               cv::Scalar( 0, 1, 0), 2, 8, 0  );
-        line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(r_hist.at<float>(i-1)) ),
-              cv::Point( bin_w*(i), hist_h - cvRound(r_hist.at<float>(i)) ),
+        line( histImage, cv::Point( bin_w * (i - 1), hist_h - cvRound(r_hist.at<float>(i - 1)) ),
+              cv::Point( bin_w * (i), hist_h - cvRound(r_hist.at<float>(i)) ),
               cv::Scalar( 0, 0, 1), 2, 8, 0  );
     }
     cv::Mat dst;
-    cv::vconcat(im,histImage, dst);
-    cv::namedWindow( window,cv::WINDOW_AUTOSIZE | cv::WINDOW_NORMAL);
+    cv::vconcat(im, histImage, dst);
+    cv::namedWindow( window, cv::WINDOW_AUTOSIZE | cv::WINDOW_NORMAL);
     cv::imshow(window, dst );
-  /*  char* name_comb;
-    name_comb = static_cast<char*>(malloc(strlen(window)+1+10)); 
-    
-    strcpy(name_comb, window); 
-    strcat(name_comb, " Histogram");
-    cv::imshow(name_comb, histImage );*/
     std::cout << "    Hit a key to continue (with the image window being active)..." << std::endl;
     cv::waitKey(0);
     cv::destroyAllWindows();
-   // free(name_comb);
 }
 
 void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, const float ming, const float minb)
@@ -486,46 +486,16 @@ void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, 
     cv::Mat g_bg = bgr_planes[1];
     cv::Mat b_bg = bgr_planes[0];
 
-	const float zx = 0.2;  // keep some of the low level, which is noise, so it looks more natural.
+    const float zx = 0.2;  // keep some of the low level, which is noise, so it looks more natural.
 
     cv::setNumThreads(-1);
 
     const int split = 7;
-    const int row_split = r_bg.rows/split;
+    const int row_split = r_bg.rows / split;
 
-    ParallelSetMin parallelSetMin(r_bg,g_bg,b_bg,row_split,minr,ming,minb,zx);
-    parallel_for_(cv::Range(0, split+1), parallelSetMin,8);
+    ParallelSetMin parallelSetMin(r_bg, g_bg, b_bg, row_split, minr, ming, minb, zx);
+    parallel_for_(cv::Range(0, split + 1), parallelSetMin, 8);
 
-    /*parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
-        for (int n = range.start; n < range.end; n++)
-        {
-            int start = n * row_split;
-            int stop = start + row_split;
-            stop = stop < r_bg.rows ? stop : r_bg.rows;
-
-            for (int row = start; row < stop; row++) 
-            {
-                float* r = r_bg.ptr<float>(row);
-                float* g = g_bg.ptr<float>(row);
-                float* b = b_bg.ptr<float>(row);
-
-
-
-                for (int col = 0; col < r_bg.cols; col++)
-                {
-                    if ( *r < minr ) minr * zx * *r;
-                    if ( *g < minr ) ming * zx * *g;
-                    if ( *b < minr ) minb * zx * *b;
-
-                    r++;
-                    g++;
-                    b++;
-                }
-
-            }       
-        }
-    }, 8.);
-    */
     std::vector<cv::Mat> channels;
     channels.push_back(b_bg);
     channels.push_back(g_bg);
@@ -535,13 +505,13 @@ void setMin(cv::InputArray inImage, cv::OutputArray outImage, const float minr, 
 }
 
 void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfactor,
-    const float xoffset)
+            const float xoffset)
 {
     float scurvemin =
         (xfactor / (1.0 + exp(-1.0 * (-xoffset * xfactor))) - (1.0 - xoffset));
     float scurvemax =
         (xfactor / (1.0 + exp(-1.0 * ((1.0 - xoffset) * xfactor))) -
-            (1.0 - xoffset));
+         (1.0 - xoffset));
 
     float scurveminsc = scurvemin / scurvemax;
     float x0 = 1.0 - xoffset;
@@ -563,13 +533,13 @@ void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfacto
 }
 
 void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outImage, const float skyLR = 4096.0,
-    const float skyLG = 4096.0,
-    const float skyLB = 4096.0,
-    const float colorenhance =
-        1.0, const bool verbose=false) // possibly merge colorenhance with colorfactor?!?
+               const float skyLG = 4096.0,
+               const float skyLB = 4096.0,
+               const float colorenhance =
+                   1.0, const bool verbose = false) // possibly merge colorenhance with colorfactor?!?
 {
     if(verbose) std::cout << "    Color correction " << std::flush;
-    
+
     cv::Mat inIma = inImage.getMat();
 
     cv::Mat bgr_planes[3];
@@ -582,16 +552,16 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     cv::Mat bgr_planes_ref[3];
     cv::split(rf, bgr_planes_ref);
 
-    float zeroskyred = skyLR / 65535.0;   
+    float zeroskyred = skyLR / 65535.0;
     float zeroskygreen = skyLG / 65535.0;
     float zeroskyblue = skyLB / 65535.0;
-    
+
     if(verbose) std::cout << "|" << std::flush;
-   
+
     cv::Mat tmp, lum;
     cv::add(r_bg, g_bg, lum);
     cv::add(lum, b_bg, tmp);
-    cv::max(tmp, 0.0, lum); 
+    cv::max(tmp, 0.0, lum);
 
     double maxlum;
     cv::minMaxLoc(lum, 0, &maxlum, 0, 0);
@@ -606,109 +576,33 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     cv::Mat cfe;
     cv::multiply(lum, cfactor * colorenhance, cfe);
 
-    const float ref_limit = 10./65535.;
+    const float ref_limit = 10. / 65535.;
 
     cv::setNumThreads(-1);
 
     const int split = 7;
-    const int row_split = r_bg.rows/split;
+    const int row_split = r_bg.rows / split;
 
     cv::Mat r_bg_ref = bgr_planes_ref[2];
     cv::Mat g_bg_ref = bgr_planes_ref[1];
     cv::Mat b_bg_ref = bgr_planes_ref[0];
+
+    ParallelColorCorr parallelColorCorr(r_bg, g_bg, b_bg, r_bg_ref, g_bg_ref, b_bg_ref, cfe, zeroskyred, zeroskygreen,
+                                        zeroskyblue, ref_limit, row_split);
+    parallel_for_(cv::Range(0, split + 1), parallelColorCorr, 8);
     
-    ParallelColorCorr parallelColorCorr(r_bg, g_bg, b_bg, r_bg_ref, g_bg_ref, b_bg_ref, cfe, zeroskyred, zeroskygreen, zeroskyblue, ref_limit, row_split);
-    parallel_for_(cv::Range(0, split+1), parallelColorCorr,8);
-    /*
-    parallel_for_(cv::Range(0, split+1), [&](const cv::Range& range){
-        for (int n = range.start; n < range.end; n++)
-        {
-            int start = n * row_split;
-            int stop = start + row_split;
-            stop = stop < r_bg.rows ? stop : r_bg.rows;
-
-            for (int row = start; row < stop; row++) 
-            {
-                float* r = r_bg.ptr<float>(row);
-                float* g = g_bg.ptr<float>(row);
-                float* b = b_bg.ptr<float>(row);
-
-                float* r_ref = bgr_planes_ref[2].ptr<float>(row);
-                float* g_ref = bgr_planes_ref[1].ptr<float>(row);
-                float* b_ref = bgr_planes_ref[0].ptr<float>(row);
-
-                float* cfef = cfe.ptr<float>(row);
-
-                for (int col = 0; col < r_bg.cols; col++)
-                {
-                    *r_ref -= zeroskyred;
-                    *g_ref -= zeroskygreen;
-                    *b_ref -= zeroskyblue;
-            
-                    *r_ref = *r_ref < ref_limit ? ref_limit : *r_ref;
-                    *g_ref = *g_ref < ref_limit ? ref_limit : *g_ref;
-                    *b_ref = *b_ref < ref_limit ? ref_limit : *b_ref;
-
-                    if (*r >= *g && *r >= *b)
-                    {           
-                        float grratio = *g_ref / *r_ref / *g * *r;
-                        float brratio = *b_ref / *r_ref / *b * *r;
-
-                        grratio = grratio > 1.0 ? 1.0 : (grratio < 0.2 ? 0.2 : grratio);
-                        brratio = brratio > 1.0 ? 1.0 : (brratio < 0.2 ? 0.2 : brratio);
-
-                        *g = *g * ( (grratio - 1.) * *cfef  + 1.) ;
-                        *b = *b * ( (brratio - 1.) * *cfef  + 1.) ;
-                    }
-                    else if (*g > *r && *g >= *b)
-                    {
-                        float rgratio = *r_ref / *g_ref / *r * *g;
-                        float bgratio = *b_ref / *g_ref / *b * *g;
-
-                        rgratio = rgratio > 1.0 ? 1.0 : (rgratio < 0.2 ? 0.2 : rgratio);
-                        bgratio = bgratio > 1.0 ? 1.0 : (bgratio < 0.2 ? 0.2 : bgratio);
-
-                        *r = *r * ( (rgratio - 1.) * *cfef  + 1.) ;
-                        *b = *b * ( (bgratio - 1.) * *cfef  + 1.) ;
-                    }
-                    //if (b > g && b > r)
-                    else 
-                    {
-                        float rbratio = *r_ref / *b_ref / *r * *b;
-                        float gbratio = *g_ref / *b_ref / *g * *b;
-
-                        rbratio = rbratio > 1.0 ? 1.0 : (rbratio < 0.2 ? 0.2 : rbratio);
-                        gbratio = gbratio > 1.0 ? 1.0 : (gbratio < 0.2 ? 0.2 : gbratio);
-
-                        *r = *r * ( (rbratio - 1.) * *cfef  + 1.) ;
-                        *g = *b * ( (gbratio - 1.) * *cfef  + 1.) ;
-                    }
-
-                    r++;
-                    g++;
-                    b++;
-                    r_ref++;
-                    g_ref++;
-                    b_ref++;
-                    cfef++;
-                }
-
-            }       
-        }
-    }, 8.);
-    */
     if(verbose) std::cout << "|" << std::flush;
 
     std::vector<cv::Mat> channels;
     channels.push_back(b_bg);
     channels.push_back(g_bg);
     channels.push_back(r_bg);
-    
+
     cv::merge(channels, outImage) ;
     if(verbose) std::cout << std::endl;
 }
 
-    //auto start = std::chrono::steady_clock::now();  
-    //auto end = std::chrono::steady_clock::now();
-    //auto diff = end - start;
-    //std::cout << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
+//auto start = std::chrono::steady_clock::now();
+//auto end = std::chrono::steady_clock::now();
+//auto diff = end - start;
+//std::cout << std::chrono::duration <double, std::milli> (diff).count() << " ms" << std::endl;
