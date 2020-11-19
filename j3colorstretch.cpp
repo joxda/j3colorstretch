@@ -180,9 +180,10 @@ int main(int argc, char** argv)
                       "{f               |       | force to overwrite output file}"
                       "{tc tonecurve   |        | application of a tone curve}"
                       "{sl skylevelfactor | 0.06 | sky level relative to the histogram peak  }"
-                      "{zeroskyred    | 4096.0    | desired zero point on sky, red channel}"
-                      "{zeroskygreen  | 4096.0    | desired zero point on sky, green channel}"
-                      "{zeroskyblue   | 4096.0    | desired zero point on sky, bue channel }"
+                      "{zerosky    | 4096.0    | desired zero point on sky, sets all channels}"
+                      "{zeroskyred    |        | desired zero point on sky, red channel}"
+                      "{zeroskygreen  |        | desired zero point on sky, green channel}"
+                      "{zeroskyblue   |        | desired zero point on sky, bue channel }"
                       "{ri rootiter    | 1      | number of iterations on applying rootpower - sky }"
                       "{rp rootpower   | 6.0    | power factor: 1/rootpower}"
                       "{rp2 rootpower2 |        | use this power on iteration 2}"
@@ -234,9 +235,13 @@ int main(int argc, char** argv)
     }
 
     float skylevelfactor = clp.get<float>("sl");
-    float skyLR = clp.get<float>("zeroskyred");
-    float skyLG = clp.get<float>("zeroskygreen");
-    float skyLB = clp.get<float>("zeroskyblue");
+    float skyLR = clp.get<float>("zerosky");
+    float skyLG = clp.get<float>("zerosky");
+    float skyLB = clp.get<float>("zerosky");
+
+    if(clp.has("zeroskyred")) skyLR = clp.get<float>("zeroskyred");
+    if(clp.has("zeroskygreen")) skyLG = clp.get<float>("zeroskygreen");
+    if(clp.has("zeroskyblue")) skyLB = clp.get<float>("zeroskyblue");
 
     //clp.errorCheck();
 

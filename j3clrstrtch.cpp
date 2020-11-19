@@ -272,8 +272,6 @@ void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
 void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
                  const float skylevelfactor, const float sky = 4096.0, const bool out = false)
 {
-    float zerosky = sky / 65535.0;
-
     if(out) std::cout << "  Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
     {
@@ -292,7 +290,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
         if (pow(chistskydn - sky, 2) <= 25)
             break;
 
-        float chistskysub1 = chistskydn / 65535. - zerosky;
+        float chistskysub1 = (chistskydn -sky )/ 65535.;
 
         float cfscale = 1.0 / (1.0 - chistskysub1);
 
@@ -308,7 +306,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
 void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
               const float skylevelfactor, const float skyLR = 4096.0,
               const float skyLG = 4096.0,
-              const float skyLB = 4096.0, const bool out = false) // TBD desired zero point in channels... ---
+              const float skyLB = 4096.0, const bool out = false) 
 {
     if(inImage.channels() == 1)
     {
@@ -323,10 +321,6 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     cv::Mat r = bgr_planes[2];
     cv::Mat g = bgr_planes[1];
     cv::Mat b = bgr_planes[0];
-
-    float zeroskyred = skyLR / 65535.0;
-    float zeroskygreen = skyLG / 65535.0;
-    float zeroskyblue = skyLB / 65535.0;
 
     if(out) std::cout << "    Sky sub iteration " << std::flush;
     for (int i = 1; i <= 25; i++)
@@ -356,10 +350,22 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         chistblueskydn = skyDN(b_hist_cropped, skylevelfactor, skylevel) + 400;
         //}
         //}},2.);
-        if (  i > 1 && (chistredskydn == 400 || chistgreenskydn == 400 || chistblueskydn == 400))
+        if (  i > 1 && (chistredskydn == 400 ))
         {
-            std::cout << "    WARNING: histogram sky level not found" << std::endl;
-            std::cout << "    Try increasing the -zerosky values" << std::endl;
+            std::cout << "    WARNING: histogram sky level red not found" << std::endl;
+            //std::cout << "    Try increasing the -zerosky values" << std::endl;
+            // break;
+        }
+        if (  i > 1 && chistgreenskydn == 400)
+        {
+            std::cout << "    WARNING: histogram sky level green not found" << std::endl;
+            //std::cout << "    Try increasing the -zerosky values" << std::endl;
+            // break;
+        }
+        if (  i > 1 && (chistblueskydn == 400))
+        {
+            std::cout << "    WARNING: histogram sky level blue not found" << std::endl;
+            //std::cout << "    Try increasing the -zerosky values" << std::endl;
             // break;
         }
 
@@ -368,9 +374,9 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
                 pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
             break;
 
-        float chistredskysub1 = chistredskydn / 65535. - zeroskyred;
-        float chistgreenskysub1 = chistgreenskydn / 65535. - zeroskygreen;
-        float chistblueskysub1 = chistblueskydn / 65535. - zeroskyblue;
+        float chistredskysub1 = (chistredskydn - skyLR)/ 65535.;
+        float chistgreenskysub1 = (chistgreenskydn - skyLG) / 65535.;
+        float chistblueskysub1 = (chistblueskydn - skyLB) / 65535.;
 
         float cfscalered = 1.0 / (1.0 - chistredskysub1);
         float cfscalegreen = 1.0 / (1.0 - chistgreenskysub1);
