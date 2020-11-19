@@ -139,7 +139,6 @@ class ParallelColorCorr : public cv::ParallelLoopBody
                             *r = *r * ( (rgratio - 1.) * *cfef  + 1.) ;
                             *b = *b * ( (bgratio - 1.) * *cfef  + 1.) ;
                         }
-                        //if (b > g && b > r)
                         else
                         {
                             float rbratio = *r_ref / *b_ref / *r * *b;
