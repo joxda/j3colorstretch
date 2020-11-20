@@ -75,17 +75,20 @@ jobs:
 #        if: runner.os =='Linux' 
 #        run: tar xzvf build/j3colorstretch-1.1.3-Linux.tar.gz
 
+      - name: list
+        run: ls
+
       - name: archive results
         if: runner.os !='Linux' 
         uses: actions/upload-artifact@v1
         with:
           name: j3colorstretch-1.1.3-${{ matrix.os }}
-          path: j3colorstretch-1.1.3-Darwin.tar.gz
+          path: build/j3colorstretch-1.1.3-Darwin.tar.gz
 
       - name: archive results
         if:  runner.os =='Linux' 
         uses: actions/upload-artifact@v1
         with:
           name: j3colorstretch-1.1.3-${{ matrix.os }}
-          path: j3colorstretch-1.1.3-${{ runner.os }}.tar.gz
+          path: build/j3colorstretch-1.1.3-${{ runner.os }}.tar.gz
 
