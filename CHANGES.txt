@@ -1,9 +1,7 @@
-- Improvements for the color correction
-- Speed up of several functions
-- Illustrate each step with the resulting image and histogram
-- Implemented setMin function
+- Several bugfixes
+- More information in the output
 
 The binaries are statically linked to the opencv library, so 
 that it does not need to be installed separately. They were 
-compiled on several Ubuntu Desktop 64bit systems (here 
-latest=18.04) and macOS systems (here latest=10.15 Catalina).
+compiled on several Ubuntu Desktop 64bit and macOS systems 
+(here latest=10.15 Catalina).
