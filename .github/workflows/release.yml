@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04,ubuntu-16.04, ubuntu-20.04, macos-latest, macos-11.0]
+        os: [ubuntu-18.04, ubuntu-16.04, ubuntu-20.04, macos-latest, macos-11.0]
 
     steps:
       - name: Checkout code
@@ -82,7 +82,7 @@ jobs:
         if: runner.os != 'Linux' 
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Darwin.tar.gz
-          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin LICENSE README.md
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Darwin LICENSE README.md LICENSE_opencv
           ls
           pwd
 
@@ -90,7 +90,7 @@ jobs:
         if: runner.os =='Linux' 
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Linux.tar.gz      
-          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux LICENSE README.md
+          zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-1.1.0-Linux LICENSE README.md LICENSE_opencv
 
       - name: Upload Release Asset
         if: runner.os =='Linux' 
