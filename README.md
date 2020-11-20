@@ -94,11 +94,13 @@ Running the executable without any parameters prints out the following help mess
 		application of a tone curve
 	-v, --verbose
 		print some progress information
-	--zeroskyblue (value:4096.0)
+	--zerosky (value:4096.0)
+		desired zero point on sky, sets all channels
+	--zeroskyblue
 		desired zero point on sky, bue channel
-	--zeroskygreen (value:4096.0)
+	--zeroskygreen
 		desired zero point on sky, green channel
-	--zeroskyred (value:4096.0)
+	--zeroskyred
 		desired zero point on sky, red channel
 ```
 
