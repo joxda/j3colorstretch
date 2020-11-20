@@ -38,7 +38,7 @@ else()
   target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
 endif()
 
-install(TARGETS j3colorstretch DESTINATION bin)
+install(TARGETS j3colorstretch DESTINATION bin PERMISSIONS OWNER_EXECUTE)
 #install(TARGETS j3clrstrtch DESTINATION lib)
 install(PROGRAMS batch-stretch DESTINATION bin)
 
