@@ -97,7 +97,7 @@ Two iterations of root stretches, two iterations of s-curves and color enhanced 
 
 ## How to obtain
 You can try the binaries provided [here](https://github.com/joxda/j3colorstretch/releases/).
-These were compiled on several Ubuntu and macOS systems and statically linked to the OpenCV libraries so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`tar xzvf j3colorstretch*tgz`) and move the batch script and j3colorstretch binary to your PATH. Alternatively you can download the source code from the [github pages](https://github.com/joxda/j3colorstretch) and follow the instructions for compiling and installing there.
+These were compiled on several Ubuntu and macOS systems and statically linked to the OpenCV libraries so that there should not be any additional requirements. Once you downloaded the tar archive, you can unpack it (`unzip j3colorstretch*zip`) and move the batch script and j3colorstretch binary from the `j3colorstretch*/bin/` subdirectory to your PATH. Alternatively you can download the source code from the [github pages](https://github.com/joxda/j3colorstretch) and follow the instructions for compiling and installing there.
 
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/H2H5250BJ)
