@@ -10,6 +10,8 @@ set (OpenCV_DIR "/usr/local/Cellar/opencv/*/lib/cmake/opencv4/")
 
 FIND_PACKAGE( OpenCV REQUIRED )
 
+FIND_PACKAGE( Eigen3 3.3 NO_MODULE )
+
 set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused -pedantic")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
@@ -30,7 +32,11 @@ TARGET_INCLUDE_DIRECTORIES( j3colorstretch PRIVATE ${OpenCV_INCLUDE_DIRS} ${CMAK
 #set(MY_OpenCV_LIBS "opencv_core;opencv_highgui;")
 
 #target_link_libraries( j3clrstrtch  ${OpenCV_LIBS} )
-target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
+if (TARGET Eigen3::Eigen AND NOT (DEFINED $ENV{CI}) )
+  target_link_libraries( j3colorstretch  ${OpenCV_LIBS} Eigen3::Eigen)
+else()
+  target_link_libraries( j3colorstretch  ${OpenCV_LIBS})
+endif()
 
 install(TARGETS j3colorstretch DESTINATION bin)
 #install(TARGETS j3clrstrtch DESTINATION lib)
