@@ -15,7 +15,7 @@ jobs:
       - name: Prerequisities
         run: |
             sudo apt-get update
-            sudo apt-get install -y doxygen 
+            sudo apt-get install -y doxygen graphviz
             pip3 install sphinx breathe sphinx_rtd_theme
 
       - name: Build docs
