@@ -7,17 +7,15 @@ on:
 jobs:
   build:
     
-    runs-on: ubuntu-20.04
+    runs-on: macos-latest
     
     steps:
       - uses: actions/checkout@v2
       
       - name: Prerequisities
         run: |
-            sudo apt-get update
-            sudo apt-get install -y doxygen graphviz 
-            conda install sphinx
-            pip install -U breathe sphinx_rtd_theme
+            brew install doxygen sphinx-doc
+            pip3 install sphinx-rtd-theme breathe sphinx-sitemap
 
       - name: Build docs
         run: |
