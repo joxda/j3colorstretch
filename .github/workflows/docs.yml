@@ -15,7 +15,7 @@ jobs:
       - name: Prerequisities
         run: |
             sudo apt-get update
-            sudo apt-get install -y doxygen graphviz python-sphinx
+            sudo apt-get install -y doxygen graphviz sphinx-doc
             pip install -U breathe sphinx_rtd_theme
 
       - name: Build docs
