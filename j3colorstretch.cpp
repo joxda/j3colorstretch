@@ -30,6 +30,13 @@
 
 #include "j3clrstrtch.hpp"
 
+
+/**
+ * @brief Trim white space from string
+ * 
+ * @param[in] s Input string
+ * @return Trimmed string
+ */
 inline std::string trim(const std::string &s)
 {
     auto wsfront = std::find_if_not(s.begin(), s.end(), ::isspace);
@@ -39,12 +46,26 @@ inline std::string trim(const std::string &s)
                        .base());
 }
 
+
+/**
+ * @brief Class for parsing command line arguments
+ * 
+ */
 struct CustomCLP2
-{
+{       
+        /// OpenCV command line parser
         cv::CommandLineParser _clp;
+        /// Vector to hold positional arguments
         std::vector<std::string> pos_args;
 
     public:
+        /**
+         * @brief Construct a command line parser object
+         * 
+         * @param argc number of arguments
+         * @param argv command line arguments
+         * @param keys possible keyword arguments
+         */
         CustomCLP2(int argc, const char* const argv[], const cv::String &keys)
             : _clp(argc, argv, keys)
         {
@@ -61,10 +82,24 @@ struct CustomCLP2
 
         }
 
+        /**
+         * @brief Check for any parsing errors
+         * 
+         * @return true 
+         * @return false 
+         */
         bool check() const
         {
             return _clp.check();
         }
+
+        /**
+         * @brief 
+         * 
+         * @param[in] name Name of keyword argument
+         * @return true 
+         * @return false 
+         */
         bool has(const cv::String &name) const
         {
             return _clp.has(name);
@@ -86,6 +121,10 @@ struct CustomCLP2
             return t;
         }
 
+        /**
+         * @brief Print error messages if there were any
+         * 
+         */
         void errorCheck()
         {
             if (!_clp.check())
@@ -94,23 +133,47 @@ struct CustomCLP2
             }
         }
 
+        /**
+         * @brief 
+         * Print messages
+         * 
+         */
         void printMessage()
         {
             _clp.printMessage();
         }
 
+        /**
+         * @brief Get positional arguments by index
+         * 
+         * @param index Index of the positional argument
+         * @param space_delete Switch to strip white spaces
+         * @return Value 
+         */
         cv::String get(int index, bool space_delete) const
         {
             return cv::String(pos_args[index]);
         }
 
+        /**
+         * @brief 
+         * Get number of positional arguments
+         * 
+         * @return number
+         */
         unsigned long n_positional_args() const
         {
             return pos_args.size();
         }
 };
 
-
+/**
+ * @brief Scale image to 16 bit range and write tiff file
+ * 
+ * @param[in] ofile File name
+ * @param[in] output Image to be written
+ * @return Status (0==OK)
+ */
 int writeTif(const char* ofile, cv::Mat output)
 {
     cv::Mat out;
@@ -129,7 +192,13 @@ int writeTif(const char* ofile, cv::Mat output)
 }
 
 
-
+/**
+ * @brief Scale image to 8 bit range and write jpeg file
+ * 
+ * @param[in] ofile File name
+ * @param[in] output Image to be written
+ * @return Status (0==OK)
+ */
 int writeJpg(const char* ofile, cv::Mat output)
 {
     cv::Mat out;
@@ -147,6 +216,13 @@ int writeJpg(const char* ofile, cv::Mat output)
     return 0;
 }
 
+/**
+ * @brief Read image and convert to 32 bit floating point
+ * 
+ * @param[in] file File name
+ * @param[in] image cv::Mat to hold the image
+ * @return Status (0==OK)
+ */
 int readImage(const char* file, cv::Mat &image)
 {
     image = cv::imread(file, cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
@@ -167,6 +243,13 @@ int readImage(const char* file, cv::Mat &image)
     return 0;
 }
 
+/**
+ * @brief Test whether file exists
+ * 
+ * @param filename Filename
+ * @return true 
+ * @return false 
+ */
 bool fexists(const std::string &filename)
 {
     std::ifstream ifile(filename.c_str());

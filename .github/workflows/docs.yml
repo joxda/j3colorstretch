@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, doxy ]
+  
+jobs:
+  build:
+    
+    runs-on: ubuntu-20.04
+    
+    steps:
+      - uses: actions/checkout@v2
+        run: |
+            sudo apt-get install -y doxygen python3-sphinx
+            pip3 install breathe sphinx_rtd_theme
+
+      - name: Build docs
+        run: |
+          cd doc
+          cmake .
+          make
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: doc/docs/sphinx # The folder the action should deploy.
+          TARGET_FOLDER: doc
+          CLEAN: true
