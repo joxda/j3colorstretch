@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Documentation for j3colorstretch &mdash; j3colorstretch 1.1.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> j3colorstretch
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Documentation for j3colorstretch</a><ul>
+<li><a class="reference internal" href="#image-processing-functions-in-j3clrstrtch">Image processing functions in j3clrstrtch</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">j3colorstretch</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Documentation for j3colorstretch</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="documentation-for-j3colorstretch">
+<h1>Documentation for j3colorstretch<a class="headerlink" href="#documentation-for-j3colorstretch" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>The code uses internally images represented in pixels with 32bit floating point values in the range from 0…1.
+Any input values (e.g. target sky value etc) are referenced to 16bit integer values as they would be in 16bit TIFF
+images (i.e. in the range from 0 to 65535), the most common type of input image.</p>
+<p>The main source code in <code class="docutils literal notranslate"><span class="pre">j3colorstretch.cpp</span></code> implements the command line parsing and image IO and calls the
+image processing functions (implemented in <code class="docutils literal notranslate"><span class="pre">j3clrstrch.cpp</span></code>) as needed. The following steps are run through in the
+given order, all but the input output steps are optional and can be switched on/off and specified with parameters
+per command line options:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">read</span> <span class="n">image</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">Apply</span> <span class="n">tone</span> <span class="n">curve</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">Sky</span> <span class="n">subtraction</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">Root</span> <span class="n">stretch</span> <span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
+<span class="o">|</span>      <span class="o">|</span>
+<span class="o">|</span>      <span class="o">-----</span> <span class="n">Sky</span> <span class="n">subtraction</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">S</span><span class="o">-</span><span class="n">curve</span> <span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
+<span class="o">|</span>      <span class="o">|</span>
+<span class="o">|</span>      <span class="o">-----</span> <span class="n">Sky</span> <span class="n">subtraction</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">Set</span> <span class="n">minimum</span> <span class="n">reasonable</span> <span class="n">pixel</span> <span class="n">value</span>
+<span class="o">|</span>
+<span class="o">------</span> <span class="n">Color</span> <span class="n">correction</span>
+<span class="o">|</span>      <span class="o">|</span>
+<span class="o">|</span>      <span class="o">-----</span> <span class="n">Sky</span> <span class="n">subtraction</span>
+<span class="o">|</span>
+<span class="o">-</span> <span class="n">write</span> <span class="n">image</span>
+</pre></div>
+</div>
+<div class="section" id="image-processing-functions-in-j3clrstrtch">
+<h2>Image processing functions in j3clrstrtch<a class="headerlink" href="#image-processing-functions-in-j3clrstrtch" title="Permalink to this headline">¶</a></h2>
+<p>Functions that facilitate the steps in the background subtraction, image stretching, and color preservation, as well as several helper functions. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv44histN2cv10InputArrayEN2cv11OutputArrayEKb">
+<span id="_CPPv34histN2cv10InputArrayEN2cv11OutputArrayEKb"></span><span id="_CPPv24histN2cv10InputArrayEN2cv11OutputArrayEKb"></span><span id="hist__cv::InputArray.cv::OutputArray.bC"></span><span class="target" id="j3clrstrtch_8hpp_1aefb25aa9facc2fbd12c3fdafb4ebd94b"></span>void <code class="sig-name descname">hist</code><span class="sig-paren">(</span>cv::InputArray <em>image</em>, cv::OutputArray <em>hist</em>, <em class="property">const</em> bool <em>blur</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv44histN2cv10InputArrayEN2cv11OutputArrayEKb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Calculates the histogram of the image data between 0 and 1 with 65536 bins. Optionally the histogram is smoothed. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">image</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">hist</span></code>: Output histogram </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">blur</span></code>: Switch whether or not to blurr the histogram </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv48showHistN2cv10InputArrayEPKc">
+<span id="_CPPv38showHistN2cv10InputArrayEPKc"></span><span id="_CPPv28showHistN2cv10InputArrayEPKc"></span><span id="showHist__cv::InputArray.cCP"></span><span class="target" id="j3clrstrtch_8hpp_1a232e8fa96e8bed212f1107a3826b7b21"></span>void <code class="sig-name descname">showHist</code><span class="sig-paren">(</span>cv::InputArray <em>im</em>, <em class="property">const</em> char *<em>window</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48showHistN2cv10InputArrayEPKc" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Helper function to display RGB histograms. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">im</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">window</span></code>: Name of the window </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv45skyDNN2cv10InputArrayEKfRf">
+<span id="_CPPv35skyDNN2cv10InputArrayEKfRf"></span><span id="_CPPv25skyDNN2cv10InputArrayEKfRf"></span><span id="skyDN__cv::InputArray.floatC.floatR"></span><span class="target" id="j3clrstrtch_8hpp_1a2b4f3e7290ce2ba6ebd76c3e6ae7d95b"></span>int <code class="sig-name descname">skyDN</code><span class="sig-paren">(</span>cv::InputArray <em>hist</em>, <em class="property">const</em> float <em>skylevelfactor</em>, float &amp;<em>skylevel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45skyDNN2cv10InputArrayEKfRf" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Finds where the histogram reaches the skylevel. </p>
+<p><dl class="xrefsect">
+<dt>
+<em>Bug:</em></dt>
+<dd><p>With 8bit input images that are stretch the histogram becomes sparse and the stretching is not sufficient to consistently find the skylevel. </p>
+</dd></dl>
+
+<dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>int Number of the bin where the skylevel was found</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">hist</span></code>: Input histogram </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel &lt; 0 </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[inout]</span> <span class="pre">skylevel</span></code>: If &gt; 0, it specifies the sky level directly </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv46setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf">
+<span id="_CPPv36setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf"></span><span id="_CPPv26setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf"></span><span id="setMin__cv::InputArray.cv::OutputArray.floatC.floatC.floatC"></span><span class="target" id="j3clrstrtch_8hpp_1a4e1a398a8bc8c20a674eb9600b3d9cec"></span>void <code class="sig-name descname">setMin</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> float <em>minr</em>, <em class="property">const</em> float <em>ming</em>, <em class="property">const</em> float <em>minb</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv46setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set damp small pixel values in an image to avoid enhancing noise The pixel values in the channels below a limit are damped by X = X * limit * zfac. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">minr</span></code>: Red limit </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">ming</span></code>: Green limit </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">minb</span></code>: Blue limit </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv49toneCurveN2cv10InputArrayEN2cv11OutputArrayE">
+<span id="_CPPv39toneCurveN2cv10InputArrayEN2cv11OutputArrayE"></span><span id="_CPPv29toneCurveN2cv10InputArrayEN2cv11OutputArrayE"></span><span id="toneCurve__cv::InputArray.cv::OutputArray"></span><span class="target" id="j3clrstrtch_8hpp_1a1a0357ed81225d88fed64b89cc5fcb93"></span>void <code class="sig-name descname">toneCurve</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49toneCurveN2cv10InputArrayEN2cv11OutputArrayE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Applies a simple gamma correction X = X*12./(1/12.)^(X^0.4) </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input Image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output Image </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv411CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb">
+<span id="_CPPv311CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb"></span><span id="_CPPv211CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb"></span><span id="CVskysub1Ch__cv::InputArray.cv::OutputArray.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1a76d473071a76a7d8f5129cf4f39da594"></span>void <code class="sig-name descname">CVskysub1Ch</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> float <em>skylevelfactor</em>, <em class="property">const</em> float <em>sky</em> = 4096.0, <em class="property">const</em> bool <em>out</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subtracts for an image with a single channel the sky background and adjusts it to the requested skylevel. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">sky</span></code>: Target sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">out</span></code>: Switch progress information output </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv48CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb">
+<span id="_CPPv38CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="_CPPv28CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="CVskysub__cv::InputArray.cv::OutputArray.floatC.floatC.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1af2965f80b1ee19376fe5e55916fed6de"></span>void <code class="sig-name descname">CVskysub</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> float <em>skylevelfactor</em>, <em class="property">const</em> float <em>skyLR</em> = 4096.0, <em class="property">const</em> float <em>skyLG</em> = 4096.0, <em class="property">const</em> float <em>skyLB</em> = 4096.0, <em class="property">const</em> bool <em>out</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subtracts the sky background in an image and adjusts it to the requested skylevel. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLR</span></code>: Target red sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLG</span></code>: Target green sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLB</span></code>: Target blue sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">out</span></code>: Switch progress information output </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv413setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf">
+<span id="_CPPv313setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf"></span><span id="_CPPv213setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf"></span><span id="setBlackPoint__cv::InputArray.cv::OutputArray.float"></span><span class="target" id="j3clrstrtch_8hpp_1aff25535e8cf8a02541f827d8887ff08e"></span>void <code class="sig-name descname">setBlackPoint</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, float <em>bp</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the Black Point object The new pixel values are given by (X - bp)/(1 - bp) and clipped be larger than 0. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">bp</span></code>: Black point (in the range from 0 &lt;= bp &lt; 1) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv410stretchingN2cv10InputArrayEN2cv11OutputArrayEKd">
+<span id="_CPPv310stretchingN2cv10InputArrayEN2cv11OutputArrayEKd"></span><span id="_CPPv210stretchingN2cv10InputArrayEN2cv11OutputArrayEKd"></span><span id="stretching__cv::InputArray.cv::OutputArray.doubleC"></span><span class="target" id="j3clrstrtch_8hpp_1a04588812d944f08cb535861293eee9bb"></span>void <code class="sig-name descname">stretching</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> double <em>rootpower</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410stretchingN2cv10InputArrayEN2cv11OutputArrayEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Applies a root stretch. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">rootpower</span></code>: Root power of the stretch </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv46scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf">
+<span id="_CPPv36scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf"></span><span id="_CPPv26scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf"></span><span id="scurve__cv::InputArray.cv::OutputArray.floatC.floatC"></span><span class="target" id="j3clrstrtch_8hpp_1ac970d2c229ff1e63c623a86d38b4f688"></span>void <code class="sig-name descname">scurve</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> float <em>xfactor</em>, <em class="property">const</em> float <em>xoffset</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv46scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Applies an S-Curve stretch. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">xfactor</span></code>: Factor parameter for the S-curve </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">xoffset</span></code>: Offset parameter for the S-curve </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv49colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb">
+<span id="_CPPv39colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="_CPPv29colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="colorcorr__cv::InputArray.cv::InputArray.cv::OutputArray.floatC.floatC.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1a7a010ad6420f6b227d2969696caacd92"></span>void <code class="sig-name descname">colorcorr</code><span class="sig-paren">(</span>cv::InputArray <em>inImage</em>, cv::InputArray <em>ref</em>, cv::OutputArray <em>outImage</em>, <em class="property">const</em> float <em>skyLR</em> = 4096.0, <em class="property">const</em> float <em>skyLG</em> = 4096.0, <em class="property">const</em> float <em>skyLB</em> = 4096.0, <em class="property">const</em> float <em>colorenhance</em> = 1.0, <em class="property">const</em> bool <em>verbose</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Applies a colour correcetion This essentially uses the colours before the images is stretched to correct for the less colourful bright parts in the image after stretching. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image (background subtracted and stretched) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">ref</span></code>: Referene image for the colours </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Ouput image </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLR</span></code>: Red target sky level that which was used in the background subtraction </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLG</span></code>: Green target sky level that which was used in the background subtraction </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLB</span></code>: Blue target sky level that which was used in the background subtraction </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">colorenhance</span></code>: Colour enhancement factor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">verbose</span></code>: Switch for verbose option </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Joachim Janz.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
