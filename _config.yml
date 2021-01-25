@@ -6,8 +6,8 @@ description: Stretches astronomical images while preserving the colors.
 google_analytics: UA-177272533-1
 
 include:
-  - doc/_static
-  - doc/_sources
+  - _static
+  - _sources
   
 plugins:
   - jekyll-seo-tag
