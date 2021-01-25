@@ -22,8 +22,7 @@ jobs:
           cd doc
           cmake .
           make
-          cd docs/sphinx && touch .nojekyll
-
+          
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
