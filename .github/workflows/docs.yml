@@ -11,8 +11,10 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Prerequisities
         run: |
-            sudo apt-get install -y doxygen python3-sphinx
+            sudo apt-get install -y doxygen python3-pip python3-sphinx
             pip3 install breathe sphinx_rtd_theme
 
       - name: Build docs
