@@ -49,6 +49,7 @@ ChannelValue = ( ChannelValue / 255 ) *
 //#include <chrono>
 #include <opencv2/core/cvdef.h>
 
+
 void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
 {
     cv::Mat ima = image.getMat();
@@ -71,16 +72,39 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp)
 {
     cv::subtract(inImage, cv::Scalar::all(bp), outImage);
     cv::divide(outImage, cv::Scalar::all(1 - bp), outImage);
+    cv::max(outImage,0,outImage);
 }
+
+
 // Should the split images be used troughout??!
 // would it be benefitial to use calcHist on all channels and
 //    to run through the for loop once?
 //    or to use parallel_for_?
 
 
+/**
+ * @brief Class with the code for the color correction to be run by OpenCV's parallel_for_
+ * 
+ */
 class ParallelColorCorr : public cv::ParallelLoopBody
 {
     public:
+        /**
+         * @brief Construct a new Parallel Color Corr object
+         * 
+         * @param r_bg Input background subtracted stretched red iamge
+         * @param g_bg Input background subtracted stretched green iamge
+         * @param b_bg Input background subtracted stretched blue iamge
+         * @param r_bg_ref Input background subtracted red reference iamge
+         * @param g_bg_ref Input background subtracted green reference iamge
+         * @param b_bg_ref Input background subtracted blue reference iamge
+         * @param cfe Input matrix with the color correction factor (depending on user choice and luminosity of the pixel)
+         * @param zeroskyred Red target sky level that which was used in the background subtraction
+         * @param zeroskygreen Green target sky level that which was used in the background subtraction
+         * @param zeroskyblue Blue target sky level that which was used in the background subtraction
+         * @param ref_limit Lower limit for the values in the reference image
+         * @param row_split Number of groups of rows which can be processed in parallel
+         */
         ParallelColorCorr (cv::Mat &r_bg, cv::Mat &g_bg, cv::Mat &b_bg, cv::Mat &r_bg_ref, cv::Mat &g_bg_ref, cv::Mat &b_bg_ref,
                            cv::Mat &cfe, const float zeroskyred, const float zeroskygreen, const float zeroskyblue, const float ref_limit,
                            const int row_split) : r_bg(r_bg), g_bg(g_bg), b_bg(b_bg), r_bg_ref(r_bg_ref), g_bg_ref(g_bg_ref), b_bg_ref(b_bg_ref),
@@ -173,9 +197,26 @@ class ParallelColorCorr : public cv::ParallelLoopBody
         int row_split;
 };
 
+/**
+ * @brief Class with the code for setting the minimum to be run by OpenCV's parallel_for_
+ * 
+ */
 class ParallelSetMin : public cv::ParallelLoopBody
 {
     public:
+        /**
+         * @brief Construct a new Parallel Set Min object
+         * The pixel values in the channels below a limit are damped by X = X * limit * zfac
+         * 
+         * @param rbg Red input image
+         * @param gbg Green input image
+         * @param bbg Blue input image
+         * @param rowsplit Number of groups of rows to be processes in parallel
+         * @param mr Red limit
+         * @param mg Grren limit
+         * @param mb Blue limit
+         * @param zfac Dampening factor
+         */
         ParallelSetMin ( cv::Mat &rbg, cv::Mat &gbg, cv::Mat &bbg, const int rowsplit, const float mr,  const float mg,
                          const float mb, const float zfac) : r_bg(rbg), g_bg(gbg), b_bg(bbg), row_split(rowsplit), minr(mr), ming(mg), minb(mb),
             zx(zfac)
@@ -254,10 +295,11 @@ inline int skyDN(
     return chistskydn;
 }
 
+
 void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
 {
-    //         af*b*(1/d)^((af/c)^0.4)
-    // b^z = exp( z * ln b )
+    /// X*b*(1/12.)^(X^0.4)
+    /// uses: b^z = exp( z * ln b )
     float fac = log(1.0 / 12.0);
     float b = 12.0;
 
@@ -268,6 +310,7 @@ void toneCurve(cv::InputArray inImage, cv::OutputArray outImage)
     cv::multiply(inImage, tmpImage3, tmpImage);
     cv::multiply(tmpImage, b, outImage);
 }
+
 
 void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
                  const float skylevelfactor, const float sky = 4096.0, const bool out = false)
@@ -327,10 +370,13 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
     {
         if(out) std::cout << "|" << std::flush;
         cv::Mat r_hist, g_hist, b_hist;
+        // histograms use 65535 bins corresponding to 16bits (pixel values should be in the range from 0 to 1)
         hist(r, r_hist, true);
         hist(g, g_hist, true);
         hist(b, b_hist, true);
 
+        // Histrograms are igroring the first 400 and last about 400 bins 
+        // to avoid problems with saturated or clipped pixels
         cv::Rect roi = cv::Rect(0, 400, 1, 65100);
         cv::Mat r_hist_cropped = r_hist(roi);
         cv::Mat g_hist_cropped = g_hist(roi);
@@ -339,6 +385,8 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         float skylevel = -1.;
         int chistredskydn, chistgreenskydn, chistblueskydn;
 
+        // Green is the reference channel
+        // offset the value by 400 to account fot the clipping of the histogram above
         chistgreenskydn = skyDN(g_hist_cropped, skylevelfactor, skylevel) + 400;
 
         //parallel_for_(cv::Range(0, 2), [&](const cv::Range& range){
@@ -369,6 +417,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
             // break;
         }
 
+        // Condition to stop when the value is within 5 pxiels after the first iteration
         if (pow(chistgreenskydn - skyLG, 2) <= 25 &&
                 pow(chistredskydn - skyLR, 2) <= 25 &&
                 pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
@@ -378,6 +427,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         float chistgreenskysub1 = (chistgreenskydn - skyLG) / 65535.;
         float chistblueskysub1 = (chistblueskydn - skyLB) / 65535.;
 
+        // normalizatons
         float cfscalered = 1.0 / (1.0 - chistredskysub1);
         float cfscalegreen = 1.0 / (1.0 - chistgreenskysub1);
         float cfscaleblue = 1.0 / (1.0 - chistblueskysub1);
@@ -407,6 +457,7 @@ void stretching(
     double x = 1. / rootpower;
 
     cv::Mat dim;
+    // For high root powers use double precision
     if (rootpower > 30.)
     {
         cv::Mat inImage = inImageA.getMat();
@@ -439,7 +490,6 @@ void stretching(
         dim.copyTo(outImage);
     }
 }
-
 
 void showHist(cv::InputArray im, const char* window)
 {
@@ -536,6 +586,7 @@ void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfacto
 
     cv::max(outImage, 0.0, outImage);
 }
+
 
 void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outImage, const float skyLR = 4096.0,
                const float skyLG = 4096.0,

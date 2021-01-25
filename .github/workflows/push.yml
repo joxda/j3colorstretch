@@ -34,7 +34,9 @@ jobs:
       
       - name: gtk
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
 
       - name: Get opencv
 #        if: steps.cache-opencv.outputs.cache-hit != 'true'

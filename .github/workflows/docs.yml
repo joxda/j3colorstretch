@@ -1,0 +1,33 @@
+name: DOC
+
+on:
+  push:
+    branches: [ master, doxy ]
+  
+jobs:
+  build:
+    
+    runs-on: macos-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Prerequisities
+        run: |
+            brew install doxygen sphinx-doc
+            pip3 install sphinx-rtd-theme breathe sphinx-sitemap
+
+      - name: Build docs
+        run: |
+          cd doc
+          cmake .
+          make
+          
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: doc/docs/sphinx # The folder the action should deploy.
+          TARGET_FOLDER: doc
+          CLEAN: true
