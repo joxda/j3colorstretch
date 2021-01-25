@@ -61,7 +61,7 @@ void showHist(cv::InputArray im, const char* window);
 /**
  * @brief Finds where the histogram reaches the skylevel
  * 
- * @param[in] inHist Input histogram
+ * @param[in] hist Input histogram
  * @param[in] skylevelfactor The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel < 0
  * @param[in,out] skylevel If > 0, it specifies the sky level directly
  * @return int Number of the bin where the skylevel was found
@@ -135,7 +135,7 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp);
  * @brief Applies a root stretch
  * 
  * 
- * @param[in] inImageA Input image
+ * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] rootpower Root power of the stretch
  */
