@@ -20,7 +20,7 @@ These were compiled on several Ubuntu Desktop and macOS systems and statically l
 
 # Development
 
-Developers can get a quick overview over the code with the documentation [here](https://joxda.github.io/j3colorstretch/doc/).
+Developers can get a quick overview over the code in the documentation [here](https://joxda.github.io/j3colorstretch/doc/).
 
 # Requirements for compilation
 
