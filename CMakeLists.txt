@@ -8,7 +8,6 @@ endif()
 
 set (OpenCV_DIR "/usr/local/Cellar/opencv/*/lib/cmake/opencv4/")
 
-FIND_PACKAGE( OpenCV REQUIRED core improc highgui )
 
 FIND_PACKAGE( Eigen3 3.3 NO_MODULE )
 
@@ -20,6 +19,9 @@ add_compile_options(-std=c++11)
 if(DEFINED $ENV{CI})
   message("THIS IS A CI RUN")
   set(BUILD_SHARED_LIBS=OFF)
+  FIND_PACKAGE( OpenCV )
+else()
+  FIND_PACKAGE( OpenCV REQUIRED core improc highgui )
 endif()
 
 add_executable( j3colorstretch j3colorstretch.cpp j3clrstrtch.cpp )

@@ -68,12 +68,13 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur)
     }
 }
 
+/*
 void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp)
 {
     cv::subtract(inImage, cv::Scalar::all(bp), outImage);
     cv::divide(outImage, cv::Scalar::all(1 - bp), outImage);
     cv::max(outImage, 0, outImage);
-}
+}*/
 
 
 // Should the split images be used troughout??!

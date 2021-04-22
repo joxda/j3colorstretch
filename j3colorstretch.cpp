@@ -121,17 +121,17 @@ struct CustomCLP2
             return t;
         }
 
-        /**
+        /*
          * @brief Print error messages if there were any
          *
          */
-        void errorCheck()
+        /*void errorCheck()
         {
             if (!_clp.check())
             {
                 _clp.printErrors();
             }
-        }
+        }*/
 
         /**
          * @brief
