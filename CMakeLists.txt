@@ -21,7 +21,7 @@ if(DEFINED $ENV{CI})
   set(BUILD_SHARED_LIBS=OFF)
   FIND_PACKAGE( OpenCV )
 else()
-  FIND_PACKAGE( OpenCV )
+  FIND_PACKAGE( OpenCV REQUIRED core imgproc highgui  )
 endif()
 
 add_executable( j3colorstretch j3colorstretch.cpp j3clrstrtch.cpp )
