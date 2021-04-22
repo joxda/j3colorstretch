@@ -44,7 +44,7 @@ jobs:
           repository: opencv/opencv
           path: opencv
           token: ${{ github.token }}
-          ref: ${{secrets.OPENCV_VERSION}}
+          ref:  '4.5.2' #${{secrets.OPENCV_VERSION}}
 
       # (eigen?), matrix build, checkout CMakeList.txt in .../static
       - name: Build opencv
