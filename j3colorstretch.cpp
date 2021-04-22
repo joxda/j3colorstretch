@@ -33,7 +33,7 @@
 
 /**
  * @brief Trim white space from string
- * 
+ *
  * @param[in] s Input string
  * @return Trimmed string
  */
@@ -49,10 +49,10 @@ inline std::string trim(const std::string &s)
 
 /**
  * @brief Class for parsing command line arguments
- * 
+ *
  */
 struct CustomCLP2
-{       
+{
         /// OpenCV command line parser
         cv::CommandLineParser _clp;
         /// Vector to hold positional arguments
@@ -61,7 +61,7 @@ struct CustomCLP2
     public:
         /**
          * @brief Construct a command line parser object
-         * 
+         *
          * @param argc number of arguments
          * @param argv command line arguments
          * @param keys possible keyword arguments
@@ -84,9 +84,9 @@ struct CustomCLP2
 
         /**
          * @brief Check for any parsing errors
-         * 
-         * @return true 
-         * @return false 
+         *
+         * @return true
+         * @return false
          */
         bool check() const
         {
@@ -94,11 +94,11 @@ struct CustomCLP2
         }
 
         /**
-         * @brief 
-         * 
+         * @brief
+         *
          * @param[in] name Name of keyword argument
-         * @return true 
-         * @return false 
+         * @return true
+         * @return false
          */
         bool has(const cv::String &name) const
         {
@@ -123,7 +123,7 @@ struct CustomCLP2
 
         /**
          * @brief Print error messages if there were any
-         * 
+         *
          */
         void errorCheck()
         {
@@ -134,9 +134,9 @@ struct CustomCLP2
         }
 
         /**
-         * @brief 
+         * @brief
          * Print messages
-         * 
+         *
          */
         void printMessage()
         {
@@ -145,10 +145,10 @@ struct CustomCLP2
 
         /**
          * @brief Get positional arguments by index
-         * 
+         *
          * @param index Index of the positional argument
          * @param space_delete Switch to strip white spaces
-         * @return Value 
+         * @return Value
          */
         cv::String get(int index, bool space_delete) const
         {
@@ -156,9 +156,9 @@ struct CustomCLP2
         }
 
         /**
-         * @brief 
+         * @brief
          * Get number of positional arguments
-         * 
+         *
          * @return number
          */
         unsigned long n_positional_args() const
@@ -169,7 +169,7 @@ struct CustomCLP2
 
 /**
  * @brief Scale image to 16 bit range and write tiff file
- * 
+ *
  * @param[in] ofile File name
  * @param[in] output Image to be written
  * @return Status (0==OK)
@@ -194,7 +194,7 @@ int writeTif(const char* ofile, cv::Mat output)
 
 /**
  * @brief Scale image to 8 bit range and write jpeg file
- * 
+ *
  * @param[in] ofile File name
  * @param[in] output Image to be written
  * @return Status (0==OK)
@@ -218,7 +218,7 @@ int writeJpg(const char* ofile, cv::Mat output)
 
 /**
  * @brief Read image and convert to 32 bit floating point
- * 
+ *
  * @param[in] file File name
  * @param[in] image cv::Mat to hold the image
  * @return Status (0==OK)
@@ -245,10 +245,10 @@ int readImage(const char* file, cv::Mat &image)
 
 /**
  * @brief Test whether file exists
- * 
+ *
  * @param filename Filename
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 bool fexists(const std::string &filename)
 {
@@ -359,10 +359,10 @@ int main(int argc, char** argv)
     {
         rootpower2 = clp.get<float>("rp2");
     }
-    float rtpwr;
+    
     for(int i = 0; i < clp.get<int>("ri"); i++)
     {
-        rtpwr = i != 1 ? rootpower : rootpower2;
+        float rtpwr = i != 1 ? rootpower : rootpower2;
         if(verbose) std::cout << "    Image stretching iteration " << i + 1 << " (rootpower " << rtpwr << ")" <<  std::endl;
         stretching(output_norm, output_norm, rootpower);
         if(!clp.has("x"))    showHist(output_norm, "Stretched");
@@ -370,9 +370,6 @@ int main(int argc, char** argv)
         if(!clp.has("x"))    showHist(output_norm, "Skysub");
     }
 
-
-
-    float spwr, soff;
     float scurvepower1 = clp.get<float>("sc");
     float scurvepower2 = clp.get<float>("sc2");
     float scurveoff1 = clp.get<float>("so");
@@ -380,8 +377,8 @@ int main(int argc, char** argv)
 
     for(int i = 0; i < clp.get<int>("si"); i++)
     {
-        spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
-        soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
+        float spwr = i % 2 == 0 ? scurvepower1 : scurvepower2;
+        float soff = i % 2 == 0 ? scurveoff1 : scurveoff2;
         if(verbose) std::cout << "    S-curve iteration " << i + 1 << " (Power: " << spwr << " offset: " << soff << ")" <<
                                   std::endl;
         scurve(output_norm, output_norm, spwr, soff);

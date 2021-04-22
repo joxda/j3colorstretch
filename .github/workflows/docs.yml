@@ -2,27 +2,26 @@ name: DOC
 
 on:
   push:
-    branches: [ master, doxy ]
-  
+    branches: [master, doxy]
+
 jobs:
   build:
-    
     runs-on: macos-latest
-    
+
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Prerequisities
         run: |
-            brew install doxygen sphinx-doc
-            pip3 install sphinx-rtd-theme breathe sphinx-sitemap
+          brew install doxygen sphinx-doc
+          pip3 install sphinx-rtd-theme breathe sphinx-sitemap
 
       - name: Build docs
         run: |
           cd doc
           cmake .
           make
-          
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:

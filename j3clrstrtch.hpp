@@ -26,8 +26,8 @@
 
 *******************************************************************************/
 
-/** @file 
- * 
+/** @file
+ *
  * Functions that facilitate the steps in the background subtraction,
  * image stretching, and color preservation, as well as several helper functions.
  */
@@ -38,11 +38,11 @@
 #include "opencv2/core.hpp"
 
 /**
- * @brief 
- * 
- * Calculates the histogram of the image data between 0 and 1 with 65536 bins. 
+ * @brief
+ *
+ * Calculates the histogram of the image data between 0 and 1 with 65536 bins.
  * Optionally the histogram is smoothed.
- * 
+ *
  * @param[in] image Input image
  * @param[out] hist Output histogram
  * @param[in] blur Switch whether or not to blurr the histogram
@@ -51,7 +51,7 @@ void hist(cv::InputArray image, cv::OutputArray hist, const bool blur);
 
 /**
  * @brief Helper function to display RGB histograms
- * 
+ *
  * @param[in] im Input image
  * @param[in] window Name of the window
  */
@@ -60,7 +60,7 @@ void showHist(cv::InputArray im, const char* window);
 
 /**
  * @brief Finds where the histogram reaches the skylevel
- * 
+ *
  * @param[in] hist Input histogram
  * @param[in] skylevelfactor The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel < 0
  * @param[in,out] skylevel If > 0, it specifies the sky level directly
@@ -75,7 +75,7 @@ inline int skyDN(
 /**
  * @brief Set damp small pixel values in an image to avoid enhancing noise
  * The pixel values in the channels below a limit are damped by X = X * limit * zfac
- * 
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] minr Red limit
@@ -94,7 +94,7 @@ void toneCurve(cv::InputArray inImage, cv::OutputArray outImage);
 
 /**
  * @brief Subtracts for an image with a single channel the sky background and adjusts it to the requested skylevel
- * 
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] skylevelfactor Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum
@@ -106,7 +106,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
 
 /**
  * @brief Subtracts the sky background in an image and adjusts it to the requested skylevel
- * 
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] skylevelfactor Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum
@@ -124,7 +124,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
 /**
  * @brief Set the Black Point object
  * The new pixel values are given by (X - bp)/(1 - bp) and clipped be larger than 0.
- * 
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] bp Black point (in the range from 0 <= bp < 1)
@@ -133,8 +133,8 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp);
 
 /**
  * @brief Applies a root stretch
- * 
- * 
+ *
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] rootpower Root power of the stretch
@@ -145,7 +145,7 @@ void stretching(
 
 /**
  * @brief Applies an S-Curve stretch
- * 
+ *
  * @param[in] inImage Input image
  * @param[out] outImage Output image
  * @param[in] xfactor Factor parameter for the S-curve
@@ -156,9 +156,9 @@ void scurve(cv::InputArray inImage, cv::OutputArray outImage, const float xfacto
 
 /**
  * @brief Applies a colour correcetion
- * This essentially uses the colours before the images is stretched to correct for the 
+ * This essentially uses the colours before the images is stretched to correct for the
  * less colourful bright parts in the image after stretching.
- * 
+ *
  * @param[in] inImage Input image (background subtracted and stretched)
  * @param[in] ref Referene image for the colours
  * @param[out] outImage Ouput image

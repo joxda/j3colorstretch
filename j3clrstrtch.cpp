@@ -72,7 +72,7 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp)
 {
     cv::subtract(inImage, cv::Scalar::all(bp), outImage);
     cv::divide(outImage, cv::Scalar::all(1 - bp), outImage);
-    cv::max(outImage,0,outImage);
+    cv::max(outImage, 0, outImage);
 }
 
 
@@ -84,14 +84,14 @@ void setBlackPoint(cv::InputArray inImage, cv::OutputArray outImage, float bp)
 
 /**
  * @brief Class with the code for the color correction to be run by OpenCV's parallel_for_
- * 
+ *
  */
 class ParallelColorCorr : public cv::ParallelLoopBody
 {
     public:
         /**
          * @brief Construct a new Parallel Color Corr object
-         * 
+         *
          * @param r_bg Input background subtracted stretched red iamge
          * @param g_bg Input background subtracted stretched green iamge
          * @param b_bg Input background subtracted stretched blue iamge
@@ -199,7 +199,7 @@ class ParallelColorCorr : public cv::ParallelLoopBody
 
 /**
  * @brief Class with the code for setting the minimum to be run by OpenCV's parallel_for_
- * 
+ *
  */
 class ParallelSetMin : public cv::ParallelLoopBody
 {
@@ -207,7 +207,7 @@ class ParallelSetMin : public cv::ParallelLoopBody
         /**
          * @brief Construct a new Parallel Set Min object
          * The pixel values in the channels below a limit are damped by X = X * limit * zfac
-         * 
+         *
          * @param rbg Red input image
          * @param gbg Green input image
          * @param bbg Blue input image
@@ -268,23 +268,23 @@ class ParallelSetMin : public cv::ParallelLoopBody
 inline int skyDN(
     cv::InputArray inHist, const float skylevelfactor, float &skylevel)
 {
-    cv::Mat hist = inHist.getMat();
+    cv::Mat histH = inHist.getMat();
 
     cv::Point maxloc;
     int chistskydn = 0;
     double histGmax;
 
-    cv::minMaxLoc(hist, 0, &histGmax, 0, &maxloc);
+    cv::minMaxLoc(histH, 0, &histGmax, 0, &maxloc);
     if(skylevel < 0)
     {
         skylevel = (float)histGmax * skylevelfactor;
     }
 
-    const float* p = hist.ptr<float>(0, maxloc.y);
+    const float* p = histH.ptr<float>(0, maxloc.y);
     for (int ih = maxloc.y; ih >= 2; ih--)
     {
         float top = *p;
-        *p--;
+        p--;
         float bottom = *p;
         if (top >= skylevel && bottom <= skylevel)
         {
@@ -333,7 +333,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
         if (pow(chistskydn - sky, 2) <= 25)
             break;
 
-        float chistskysub1 = (chistskydn -sky )/ 65535.;
+        float chistskysub1 = (chistskydn - sky ) / 65535.;
 
         float cfscale = 1.0 / (1.0 - chistskysub1);
 
@@ -349,7 +349,7 @@ void CVskysub1Ch(cv::InputArray inImage, cv::OutputArray outImage,
 void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
               const float skylevelfactor, const float skyLR = 4096.0,
               const float skyLG = 4096.0,
-              const float skyLB = 4096.0, const bool out = false) 
+              const float skyLB = 4096.0, const bool out = false)
 {
     if(inImage.channels() == 1)
     {
@@ -375,7 +375,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
         hist(g, g_hist, true);
         hist(b, b_hist, true);
 
-        // Histrograms are igroring the first 400 and last about 400 bins 
+        // Histrograms are igroring the first 400 and last about 400 bins
         // to avoid problems with saturated or clipped pixels
         cv::Rect roi = cv::Rect(0, 400, 1, 65100);
         cv::Mat r_hist_cropped = r_hist(roi);
@@ -423,7 +423,7 @@ void CVskysub(cv::InputArray inImage, cv::OutputArray outImage,
                 pow(chistblueskydn - skyLB, 2) <= 25 && i > 1)
             break;
 
-        float chistredskysub1 = (chistredskydn - skyLR)/ 65535.;
+        float chistredskysub1 = (chistredskydn - skyLR) / 65535.;
         float chistgreenskysub1 = (chistgreenskydn - skyLG) / 65535.;
         float chistblueskysub1 = (chistblueskydn - skyLB) / 65535.;
 
@@ -646,7 +646,7 @@ void colorcorr(cv::InputArray inImage, cv::InputArray ref, cv::OutputArray outIm
     ParallelColorCorr parallelColorCorr(r_bg, g_bg, b_bg, r_bg_ref, g_bg_ref, b_bg_ref, cfe, zeroskyred, zeroskygreen,
                                         zeroskyblue, ref_limit, row_split);
     parallel_for_(cv::Range(0, split + 1), parallelColorCorr, 8);
-    
+
     if(verbose) std::cout << "|" << std::flush;
 
     std::vector<cv::Mat> channels;

@@ -1,11 +1,10 @@
-name:  create release
-
+name: create release
 
 on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
 env:
   version: 1.1.3
@@ -45,13 +44,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
       - name: gtk
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libgtk2.0-dev libgtkglext1-dev
 
       - name: Get opencv
-#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        #        if: steps.cache-opencv.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
         with:
           repository: opencv/opencv
@@ -61,7 +60,7 @@ jobs:
 
       # (eigen?), matrix build, checkout CMakeList.txt in .../static
       - name: Build opencv
-#        if: steps.cache-opencv.outputs.cache-hit != 'true'
+        #        if: steps.cache-opencv.outputs.cache-hit != 'true'
         run: |
           cd opencv
           mkdir -p build
@@ -79,7 +78,7 @@ jobs:
           make package
 
       - name: unpack
-        if: runner.os != 'Linux' 
+        if: runner.os != 'Linux'
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Darwin.tar.gz
           zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-${{ env.version }}-Darwin LICENSE README.md LICENSE_opencv
@@ -87,32 +86,31 @@ jobs:
           pwd
 
       - name: unpack
-        if: runner.os =='Linux' 
+        if: runner.os =='Linux'
         run: |
           tar xzvf build/j3colorstretch-${{ env.version }}-Linux.tar.gz      
           zip -r j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip j3colorstretch-${{ env.version }}-Linux LICENSE README.md LICENSE_opencv
 
       - name: Upload Release Asset
-        if: runner.os =='Linux' 
-        id: upload-release-asset-linux 
+        if: runner.os =='Linux'
+        id: upload-release-asset-linux
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: /home/runner/work/j3colorstretch/j3colorstretch/j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
           asset_name: j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
           asset_content_type: application/zip
 
       - name: Upload Release Asset
-        if: runner.os !='Linux' 
+        if: runner.os !='Linux'
         id: upload-release-asset-macos
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: /Users/runner/work/j3colorstretch/j3colorstretch/j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
           asset_name: j3colorstretch-${{ env.version }}-${{ matrix.os }}.zip
           asset_content_type: application/zip
-
