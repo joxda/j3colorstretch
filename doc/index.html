@@ -194,34 +194,34 @@ per command line options:</p>
 <h2>Image processing functions in j3clrstrtch<a class="headerlink" href="#image-processing-functions-in-j3clrstrtch" title="Permalink to this headline">¶</a></h2>
 <p>Functions that facilitate the steps in the background subtraction, image stretching, and color preservation, as well as several helper functions. </p>
 <div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric">Functions</p>
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv44histN2cv10InputArrayEN2cv11OutputArrayEKb">
 <span id="_CPPv34histN2cv10InputArrayEN2cv11OutputArrayEKb"></span><span id="_CPPv24histN2cv10InputArrayEN2cv11OutputArrayEKb"></span><span id="hist__cv::InputArray.cv::OutputArray.bC"></span><span class="target" id="j3clrstrtch_8hpp_1aefb25aa9facc2fbd12c3fdafb4ebd94b"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">hist</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">image</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">hist</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">bool</span> <em><span class="pre">blur</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv44histN2cv10InputArrayEN2cv11OutputArrayEKb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Calculates the histogram of the image data between 0 and 1 with 65536 bins. Optionally the histogram is smoothed. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">image</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">hist</span></code>: Output histogram </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">blur</span></code>: Switch whether or not to blurr the histogram </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] image</strong> – Input image </p></li>
+<li><p><strong>[out] hist</strong> – Output histogram </p></li>
+<li><p><strong>[in] blur</strong> – Switch whether or not to blurr the histogram </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv48showHistN2cv10InputArrayEPKc">
 <span id="_CPPv38showHistN2cv10InputArrayEPKc"></span><span id="_CPPv28showHistN2cv10InputArrayEPKc"></span><span id="showHist__cv::InputArray.cCP"></span><span class="target" id="j3clrstrtch_8hpp_1a232e8fa96e8bed212f1107a3826b7b21"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">showHist</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">im</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">char</span> <span class="pre">*</span><em><span class="pre">window</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48showHistN2cv10InputArrayEPKc" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Helper function to display RGB histograms. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">im</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">window</span></code>: Name of the window </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] im</strong> – Input image </p></li>
+<li><p><strong>[in] window</strong> – Name of the window </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
@@ -234,150 +234,152 @@ per command line options:</p>
 <dd><p>With 8bit input images that are stretch the histogram becomes sparse and the stretching is not sufficient to consistently find the skylevel. </p>
 </dd></dl>
 
-<dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>int Number of the bin where the skylevel was found</p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">hist</span></code>: Input histogram </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel &lt; 0 </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[inout]</span> <span class="pre">skylevel</span></code>: If &gt; 0, it specifies the sky level directly </p></li>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] hist</strong> – Input histogram </p></li>
+<li><p><strong>[in] skylevelfactor</strong> – The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel &lt; 0 </p></li>
+<li><p><strong>[inout] skylevel</strong> – If &gt; 0, it specifies the sky level directly </p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>int Number of the bin where the skylevel was found</p>
+</dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv46setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf">
 <span id="_CPPv36setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf"></span><span id="_CPPv26setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf"></span><span id="setMin__cv::InputArray.cv::OutputArray.floatC.floatC.floatC"></span><span class="target" id="j3clrstrtch_8hpp_1a4e1a398a8bc8c20a674eb9600b3d9cec"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">setMin</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">minr</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">ming</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">minb</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv46setMinN2cv10InputArrayEN2cv11OutputArrayEKfKfKf" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set damp small pixel values in an image to avoid enhancing noise The pixel values in the channels below a limit are damped by X = X * limit * zfac. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">minr</span></code>: Red limit </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">ming</span></code>: Green limit </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">minb</span></code>: Blue limit </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] minr</strong> – Red limit </p></li>
+<li><p><strong>[in] ming</strong> – Green limit </p></li>
+<li><p><strong>[in] minb</strong> – Blue limit </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv49toneCurveN2cv10InputArrayEN2cv11OutputArrayE">
 <span id="_CPPv39toneCurveN2cv10InputArrayEN2cv11OutputArrayE"></span><span id="_CPPv29toneCurveN2cv10InputArrayEN2cv11OutputArrayE"></span><span id="toneCurve__cv::InputArray.cv::OutputArray"></span><span class="target" id="j3clrstrtch_8hpp_1a1a0357ed81225d88fed64b89cc5fcb93"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">toneCurve</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49toneCurveN2cv10InputArrayEN2cv11OutputArrayE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Applies a simple gamma correction X = X*12./(1/12.)^(X^0.4) </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input Image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output Image </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input Image </p></li>
+<li><p><strong>[out] outImage</strong> – Output Image </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv411CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb">
 <span id="_CPPv311CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb"></span><span id="_CPPv211CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb"></span><span id="CVskysub1Ch__cv::InputArray.cv::OutputArray.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1a76d473071a76a7d8f5129cf4f39da594"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">CVskysub1Ch</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skylevelfactor</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">sky</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">bool</span> <em><span class="pre">out</span></em> <span class="pre">=</span> <span class="pre">false</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411CVskysub1ChN2cv10InputArrayEN2cv11OutputArrayEKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Subtracts for an image with a single channel the sky background and adjusts it to the requested skylevel. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">sky</span></code>: Target sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">out</span></code>: Switch progress information output </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] skylevelfactor</strong> – Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><strong>[in] sky</strong> – Target sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>[in] out</strong> – Switch progress information output </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv48CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb">
 <span id="_CPPv38CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="_CPPv28CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="CVskysub__cv::InputArray.cv::OutputArray.floatC.floatC.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1af2965f80b1ee19376fe5e55916fed6de"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">CVskysub</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skylevelfactor</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLR</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLG</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLB</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">bool</span> <em><span class="pre">out</span></em> <span class="pre">=</span> <span class="pre">false</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48CVskysubN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Subtracts the sky background in an image and adjusts it to the requested skylevel. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skylevelfactor</span></code>: Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLR</span></code>: Target red sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLG</span></code>: Target green sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLB</span></code>: Target blue sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">out</span></code>: Switch progress information output </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] skylevelfactor</strong> – Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><strong>[in] skyLR</strong> – Target red sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>[in] skyLG</strong> – Target green sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>[in] skyLB</strong> – Target blue sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>[in] out</strong> – Switch progress information output </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv413setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf">
 <span id="_CPPv313setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf"></span><span id="_CPPv213setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf"></span><span id="setBlackPoint__cv::InputArray.cv::OutputArray.float"></span><span class="target" id="j3clrstrtch_8hpp_1aff25535e8cf8a02541f827d8887ff08e"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">setBlackPoint</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <span class="pre">float</span> <em><span class="pre">bp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413setBlackPointN2cv10InputArrayEN2cv11OutputArrayEf" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the Black Point object The new pixel values are given by (X - bp)/(1 - bp) and clipped be larger than 0. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">bp</span></code>: Black point (in the range from 0 &lt;= bp &lt; 1) </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] bp</strong> – Black point (in the range from 0 &lt;= bp &lt; 1) </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv410stretchingN2cv10InputArrayEN2cv11OutputArrayEKd">
 <span id="_CPPv310stretchingN2cv10InputArrayEN2cv11OutputArrayEKd"></span><span id="_CPPv210stretchingN2cv10InputArrayEN2cv11OutputArrayEKd"></span><span id="stretching__cv::InputArray.cv::OutputArray.doubleC"></span><span class="target" id="j3clrstrtch_8hpp_1a04588812d944f08cb535861293eee9bb"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">stretching</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">double</span> <em><span class="pre">rootpower</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410stretchingN2cv10InputArrayEN2cv11OutputArrayEKd" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Applies a root stretch. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">rootpower</span></code>: Root power of the stretch </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] rootpower</strong> – Root power of the stretch </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv46scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf">
 <span id="_CPPv36scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf"></span><span id="_CPPv26scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf"></span><span id="scurve__cv::InputArray.cv::OutputArray.floatC.floatC"></span><span class="target" id="j3clrstrtch_8hpp_1ac970d2c229ff1e63c623a86d38b4f688"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">scurve</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">xfactor</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">xoffset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv46scurveN2cv10InputArrayEN2cv11OutputArrayEKfKf" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Applies an S-Curve stretch. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Output image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">xfactor</span></code>: Factor parameter for the S-curve </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">xoffset</span></code>: Offset parameter for the S-curve </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image </p></li>
+<li><p><strong>[out] outImage</strong> – Output image </p></li>
+<li><p><strong>[in] xfactor</strong> – Factor parameter for the S-curve </p></li>
+<li><p><strong>[in] xoffset</strong> – Offset parameter for the S-curve </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv49colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb">
 <span id="_CPPv39colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="_CPPv29colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb"></span><span id="colorcorr__cv::InputArray.cv::InputArray.cv::OutputArray.floatC.floatC.floatC.floatC.bC"></span><span class="target" id="j3clrstrtch_8hpp_1a7a010ad6420f6b227d2969696caacd92"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">colorcorr</span></code><span class="sig-paren">(</span><span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">inImage</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">InputArray</span> <em><span class="pre">ref</span></em>, <span class="pre">cv</span><span class="pre">::</span><span class="pre">OutputArray</span> <em><span class="pre">outImage</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLR</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLG</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">skyLB</span></em> <span class="pre">=</span> <span class="pre">4096.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">float</span> <em><span class="pre">colorenhance</span></em> <span class="pre">=</span> <span class="pre">1.0</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">bool</span> <em><span class="pre">verbose</span></em> <span class="pre">=</span> <span class="pre">false</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49colorcorrN2cv10InputArrayEN2cv10InputArrayEN2cv11OutputArrayEKfKfKfKfKb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Applies a colour correcetion This essentially uses the colours before the images is stretched to correct for the less colourful bright parts in the image after stretching. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">inImage</span></code>: Input image (background subtracted and stretched) </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">ref</span></code>: Referene image for the colours </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">outImage</span></code>: Ouput image </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLR</span></code>: Red target sky level that which was used in the background subtraction </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLG</span></code>: Green target sky level that which was used in the background subtraction </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">skyLB</span></code>: Blue target sky level that which was used in the background subtraction </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">colorenhance</span></code>: Colour enhancement factor </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[in]</span> <span class="pre">verbose</span></code>: Switch for verbose option </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>[in] inImage</strong> – Input image (background subtracted and stretched) </p></li>
+<li><p><strong>[in] ref</strong> – Referene image for the colours </p></li>
+<li><p><strong>[out] outImage</strong> – Ouput image </p></li>
+<li><p><strong>[in] skyLR</strong> – Red target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>[in] skyLG</strong> – Green target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>[in] skyLB</strong> – Blue target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>[in] colorenhance</strong> – Colour enhancement factor </p></li>
+<li><p><strong>[in] verbose</strong> – Switch for verbose option </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 </div>
