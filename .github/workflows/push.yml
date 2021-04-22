@@ -7,7 +7,6 @@ on:
     branches: [master]
 
 jobs:
-  environment: master
   build:
     runs-on: ${{ matrix.os }}
     strategy:
