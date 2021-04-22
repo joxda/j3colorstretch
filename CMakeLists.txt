@@ -8,7 +8,7 @@ endif()
 
 set (OpenCV_DIR "/usr/local/Cellar/opencv/*/lib/cmake/opencv4/")
 
-FIND_PACKAGE( OpenCV REQUIRED )
+FIND_PACKAGE( OpenCV REQUIRED core improc highgui )
 
 FIND_PACKAGE( Eigen3 3.3 NO_MODULE )
 
