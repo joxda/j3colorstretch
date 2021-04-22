@@ -13,7 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, macos-latest] # macos-11.0, temporarily disabled due to github's issues
-
     steps:
       - uses: actions/checkout@v2
       # TRY pip install numpy | pip3 install numpy
@@ -27,9 +26,9 @@ jobs:
       #            $HOME/shared
       #            # FIGURE OUT HOW TO SET KEY TO INCLUDE E.G. VERSION / OS Version?
       #          key: ${{ runner.os }}-${{ matrix.os }}-opencv-${{secrets.OPENCV_VERSION}}
-      - run: |
-          find . -iname CHANGES.txt
-          pwd
+      #- run: |
+      #    find . -iname CHANGES.txt
+      #    pwd
 
       - name: gtk
         if: runner.os == 'Linux'
