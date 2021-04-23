@@ -15,13 +15,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
+FIND_PACKAGE( OpenCV REQUIRED core improc highgui )
 
 if(DEFINED $ENV{CI})
   message("THIS IS A CI RUN")
   set(BUILD_SHARED_LIBS=OFF)
-  FIND_PACKAGE( OpenCV )
-else()
-  FIND_PACKAGE( OpenCV REQUIRED core imgproc highgui  )
 endif()
 
 add_executable( j3colorstretch j3colorstretch.cpp j3clrstrtch.cpp )
