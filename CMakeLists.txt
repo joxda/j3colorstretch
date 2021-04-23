@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wunused
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wno-unused")
 
 add_compile_options(-std=c++11)
-FIND_PACKAGE( OpenCV REQUIRED core improc highgui )
+FIND_PACKAGE( OpenCV REQUIRED core imgproc highgui )
 
 if(DEFINED $ENV{CI})
   message("THIS IS A CI RUN")
