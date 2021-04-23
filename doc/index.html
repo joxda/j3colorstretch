@@ -202,9 +202,9 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] image</strong> – Input image </p></li>
-<li><p><strong>[out] hist</strong> – Output histogram </p></li>
-<li><p><strong>[in] blur</strong> – Switch whether or not to blurr the histogram </p></li>
+<li><p><strong>image</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>hist</strong> – <strong>[out]</strong> Output histogram </p></li>
+<li><p><strong>blur</strong> – <strong>[in]</strong> Switch whether or not to blurr the histogram </p></li>
 </ul>
 </dd>
 </dl>
@@ -217,8 +217,8 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] im</strong> – Input image </p></li>
-<li><p><strong>[in] window</strong> – Name of the window </p></li>
+<li><p><strong>im</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>window</strong> – <strong>[in]</strong> Name of the window </p></li>
 </ul>
 </dd>
 </dl>
@@ -238,9 +238,9 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] hist</strong> – Input histogram </p></li>
-<li><p><strong>[in] skylevelfactor</strong> – The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel &lt; 0 </p></li>
-<li><p><strong>[inout] skylevel</strong> – If &gt; 0, it specifies the sky level directly </p></li>
+<li><p><strong>hist</strong> – <strong>[in]</strong> Input histogram </p></li>
+<li><p><strong>skylevelfactor</strong> – <strong>[in]</strong> The skylevel is considered to be value corresponding the maximum in the histogram times the skylevelfactor, if the parameter skylevel &lt; 0 </p></li>
+<li><p><strong>skylevel</strong> – <strong>[inout]</strong> If &gt; 0, it specifies the sky level directly </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -256,11 +256,11 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] minr</strong> – Red limit </p></li>
-<li><p><strong>[in] ming</strong> – Green limit </p></li>
-<li><p><strong>[in] minb</strong> – Blue limit </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>minr</strong> – <strong>[in]</strong> Red limit </p></li>
+<li><p><strong>ming</strong> – <strong>[in]</strong> Green limit </p></li>
+<li><p><strong>minb</strong> – <strong>[in]</strong> Blue limit </p></li>
 </ul>
 </dd>
 </dl>
@@ -273,8 +273,8 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input Image </p></li>
-<li><p><strong>[out] outImage</strong> – Output Image </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input Image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output Image </p></li>
 </ul>
 </dd>
 </dl>
@@ -287,11 +287,11 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] skylevelfactor</strong> – Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
-<li><p><strong>[in] sky</strong> – Target sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><strong>[in] out</strong> – Switch progress information output </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>skylevelfactor</strong> – <strong>[in]</strong> Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><strong>sky</strong> – <strong>[in]</strong> Target sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>out</strong> – <strong>[in]</strong> Switch progress information output </p></li>
 </ul>
 </dd>
 </dl>
@@ -304,13 +304,13 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] skylevelfactor</strong> – Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
-<li><p><strong>[in] skyLR</strong> – Target red sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><strong>[in] skyLG</strong> – Target green sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><strong>[in] skyLB</strong> – Target blue sky value (in 16bit, i.e. between 0 and 65535) </p></li>
-<li><p><strong>[in] out</strong> – Switch progress information output </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>skylevelfactor</strong> – <strong>[in]</strong> Skylevel will be considered to be the skylevelfactor times the value corresponding to the histogram maximum </p></li>
+<li><p><strong>skyLR</strong> – <strong>[in]</strong> Target red sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>skyLG</strong> – <strong>[in]</strong> Target green sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>skyLB</strong> – <strong>[in]</strong> Target blue sky value (in 16bit, i.e. between 0 and 65535) </p></li>
+<li><p><strong>out</strong> – <strong>[in]</strong> Switch progress information output </p></li>
 </ul>
 </dd>
 </dl>
@@ -323,9 +323,9 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] bp</strong> – Black point (in the range from 0 &lt;= bp &lt; 1) </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>bp</strong> – <strong>[in]</strong> Black point (in the range from 0 &lt;= bp &lt; 1) </p></li>
 </ul>
 </dd>
 </dl>
@@ -338,9 +338,9 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] rootpower</strong> – Root power of the stretch </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>rootpower</strong> – <strong>[in]</strong> Root power of the stretch </p></li>
 </ul>
 </dd>
 </dl>
@@ -353,10 +353,10 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image </p></li>
-<li><p><strong>[out] outImage</strong> – Output image </p></li>
-<li><p><strong>[in] xfactor</strong> – Factor parameter for the S-curve </p></li>
-<li><p><strong>[in] xoffset</strong> – Offset parameter for the S-curve </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Output image </p></li>
+<li><p><strong>xfactor</strong> – <strong>[in]</strong> Factor parameter for the S-curve </p></li>
+<li><p><strong>xoffset</strong> – <strong>[in]</strong> Offset parameter for the S-curve </p></li>
 </ul>
 </dd>
 </dl>
@@ -369,14 +369,14 @@ per command line options:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>[in] inImage</strong> – Input image (background subtracted and stretched) </p></li>
-<li><p><strong>[in] ref</strong> – Referene image for the colours </p></li>
-<li><p><strong>[out] outImage</strong> – Ouput image </p></li>
-<li><p><strong>[in] skyLR</strong> – Red target sky level that which was used in the background subtraction </p></li>
-<li><p><strong>[in] skyLG</strong> – Green target sky level that which was used in the background subtraction </p></li>
-<li><p><strong>[in] skyLB</strong> – Blue target sky level that which was used in the background subtraction </p></li>
-<li><p><strong>[in] colorenhance</strong> – Colour enhancement factor </p></li>
-<li><p><strong>[in] verbose</strong> – Switch for verbose option </p></li>
+<li><p><strong>inImage</strong> – <strong>[in]</strong> Input image (background subtracted and stretched) </p></li>
+<li><p><strong>ref</strong> – <strong>[in]</strong> Referene image for the colours </p></li>
+<li><p><strong>outImage</strong> – <strong>[out]</strong> Ouput image </p></li>
+<li><p><strong>skyLR</strong> – <strong>[in]</strong> Red target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>skyLG</strong> – <strong>[in]</strong> Green target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>skyLB</strong> – <strong>[in]</strong> Blue target sky level that which was used in the background subtraction </p></li>
+<li><p><strong>colorenhance</strong> – <strong>[in]</strong> Colour enhancement factor </p></li>
+<li><p><strong>verbose</strong> – <strong>[in]</strong> Switch for verbose option </p></li>
 </ul>
 </dd>
 </dl>
